@@ -1,1 +1,3 @@
 # Swallow.Console
+
+An experiment.
