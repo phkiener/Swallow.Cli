@@ -21,4 +21,6 @@
     <File Path=".github/workflows/build.yaml" />
     <File Path=".github/workflows/publish.yaml" />
   </Folder>
+  <Project Path="src\Swallow.Console.Arguments\Swallow.Console.Arguments.csproj" />
+  <Project Path="test/Swallow.Console.Arguments.Test/Swallow.Console.Arguments.Test.csproj" />
 </Solution>
