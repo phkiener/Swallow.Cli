@@ -13,19 +13,19 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package metadata">
-    <PackageTags>swallow</PackageTags> <!-- TODO: Fill in information -->
-    <Description></Description> <!-- TODO: Fill in information -->
+    <PackageTags>swallow;console;cli;arguments;argparse</PackageTags>
+    <Description></Description>
 
     <Authors>Philipp Kiener</Authors>
-    <Copyright>2026 Philipp Kiener</Copyright> <!-- TODO: Fill in information -->
-    <PackageProjectUrl>https://github.com/phkiener/Swallow.Template</PackageProjectUrl> <!-- TODO: Fill in information -->
+    <Copyright>2025-2026 Philipp Kiener</Copyright>
+    <PackageProjectUrl>https://github.com/phkiener/Swallow.Console</PackageProjectUrl>
 
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/phkiener/Swallow.Template</RepositoryUrl> <!-- TODO: Fill in information -->
+    <RepositoryUrl>https://github.com/phkiener/Swallow.Console</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
