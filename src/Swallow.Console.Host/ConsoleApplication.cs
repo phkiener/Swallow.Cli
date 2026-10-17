@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swallow.Console.Host.Invocation;
+using Swallow.Console.Host.Routing;
 
 namespace Swallow.Console.Host;
 
@@ -8,6 +10,7 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
     private readonly ServiceProvider serviceProvider;
     private readonly IConfigurationRoot configurationRoot;
     private readonly CancellationTokenSource cancellationTokenSource = new();
+    private InvocationHandler handler = static ctx => ctx.Entrypoint?.Handler.Invoke(ctx) ?? Task.CompletedTask;
 
     public IServiceProvider ServiceProvider => serviceProvider;
     public IConfiguration Configuration => configurationRoot;
@@ -34,6 +37,8 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
 
         try
         {
+            handler = ctx => new RoutingMiddleware().InvokeAsync(ctx, handler);
+
             await Task.CompletedTask;
             return 0;
         }
