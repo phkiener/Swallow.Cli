@@ -1,6 +1,6 @@
-using Swallow.Console.Host.Invocation;
+using Swallow.Console.Invocation;
 
-namespace Swallow.Console.Host.Routing;
+namespace Swallow.Console.Routing;
 
 public sealed class Entrypoint(InvocationHandler handler, RoutePattern routePattern)
 {

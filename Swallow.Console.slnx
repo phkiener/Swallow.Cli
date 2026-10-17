@@ -24,7 +24,7 @@
   <Folder Name="/Demo/">
     <Project Path="demo/ExampleApplication/ExampleApplication.csproj" />
   </Folder>
-  <Project Path="src/Swallow.Console.Host/Swallow.Console.Host.csproj" />
   <Project Path="src\Swallow.Console.Arguments\Swallow.Console.Arguments.csproj" />
+  <Project Path="src\Swallow.Console\Swallow.Console.csproj" />
   <Project Path="test/Swallow.Console.Arguments.Test/Swallow.Console.Arguments.Test.csproj" />
 </Solution>

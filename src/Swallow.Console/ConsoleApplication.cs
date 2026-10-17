@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swallow.Console.Host.Invocation;
-using Swallow.Console.Host.Routing;
+using Swallow.Console.Invocation;
+using Swallow.Console.Routing;
 
-namespace Swallow.Console.Host;
+namespace Swallow.Console;
 
 public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
 {

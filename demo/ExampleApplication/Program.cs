@@ -1,5 +1,5 @@
-using Swallow.Console.Host;
-using Swallow.Console.Host.Routing;
+using Swallow.Console;
+using Swallow.Console.Routing;
 
 var builder = ConsoleApplication.CreateBuilder("demo");
 var app = builder.Build();

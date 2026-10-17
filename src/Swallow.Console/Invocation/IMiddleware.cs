@@ -1,4 +1,4 @@
-namespace Swallow.Console.Host.Invocation;
+namespace Swallow.Console.Invocation;
 
 public interface IMiddleware
 {

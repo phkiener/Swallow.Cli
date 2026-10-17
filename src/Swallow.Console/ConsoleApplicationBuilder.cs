@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Swallow.Console.Host;
+namespace Swallow.Console;
 
 public sealed class ConsoleApplicationBuilder
 {

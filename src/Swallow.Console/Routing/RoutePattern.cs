@@ -1,4 +1,4 @@
-namespace Swallow.Console.Host.Routing;
+namespace Swallow.Console.Routing;
 
 public sealed class RoutePattern(IFlagData[] flags)
 {
