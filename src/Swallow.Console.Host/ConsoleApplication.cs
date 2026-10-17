@@ -10,7 +10,9 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
     private readonly ServiceProvider serviceProvider;
     private readonly IConfigurationRoot configurationRoot;
     private readonly CancellationTokenSource cancellationTokenSource = new();
-    private InvocationHandler handler = static ctx => ctx.Entrypoint?.Handler.Invoke(ctx) ?? Task.CompletedTask;
+
+    private readonly List<Entrypoint> entrypoints = [];
+    private InvocationHandler appHandler = static ctx => ctx.Entrypoint?.Handler.Invoke(ctx) ?? Task.CompletedTask;
 
     public IServiceProvider ServiceProvider => serviceProvider;
     public IConfiguration Configuration => configurationRoot;
@@ -21,14 +23,9 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
         configurationRoot = configuration.Build();
     }
 
-    public void Map(string command, Delegate handler)
-    {
-        return;
-    }
-
     public void MapDefault(Delegate handler)
     {
-        return;
+        entrypoints.Add(Entrypoint.Parse(handler));
     }
 
     public async Task<int> RunAsync(string[] args)
@@ -37,10 +34,18 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
 
         try
         {
-            handler = ctx => new RoutingMiddleware().InvokeAsync(ctx, handler);
+            var initialHandler = appHandler;
+            appHandler = ctx => new RoutingMiddleware(entrypoints).InvokeAsync(ctx, initialHandler);
 
-            await Task.CompletedTask;
-            return 0;
+            var context = new InvocationContext
+            {
+                Arguments = args,
+                CancellationToken = cancellationTokenSource.Token,
+            };
+
+            await appHandler.Invoke(context);
+
+            return context.ExitCode ?? 0;
         }
         catch (Exception e)
         {
