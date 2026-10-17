@@ -1,6 +1,6 @@
-using Swallow.Console.Routing;
+using Swallow.Cli.Routing;
 
-namespace Swallow.Console.Invocation;
+namespace Swallow.Cli.Invocation;
 
 public sealed class InvocationContext
 {

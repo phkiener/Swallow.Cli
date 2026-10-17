@@ -1,4 +1,4 @@
-namespace Swallow.Console.Routing;
+namespace Swallow.Cli.Routing;
 
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class FlagAttribute(bool optional = false) : Attribute, IFlagData

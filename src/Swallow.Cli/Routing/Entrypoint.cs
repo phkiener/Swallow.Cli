@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using Swallow.Console.Invocation;
+using Swallow.Cli.Invocation;
 
-namespace Swallow.Console.Routing;
+namespace Swallow.Cli.Routing;
 
 public sealed class Entrypoint(InvocationHandler handler, RoutePattern routePattern)
 {

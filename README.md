@@ -1,10 +1,8 @@
-# Swallow.Console
+# Swallow.Cli
 
 An experiment.
 
 ## Outline
-
-- Rename to `Swallow.Cli` because it's too similar to `System.Console` otherwise?
 
 ```csharp
 var builder = ConsoleApplication.CreateBuilder();

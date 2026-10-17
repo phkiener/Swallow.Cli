@@ -17,15 +17,15 @@
     <Description></Description>
 
     <Authors>Philipp Kiener</Authors>
-    <Copyright>2025-2026 Philipp Kiener</Copyright>
-    <PackageProjectUrl>https://github.com/phkiener/Swallow.Console</PackageProjectUrl>
+    <Copyright>2026 Philipp Kiener</Copyright>
+    <PackageProjectUrl>https://github.com/phkiener/Swallow.Cli</PackageProjectUrl>
 
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/phkiener/Swallow.Console</RepositoryUrl>
+    <RepositoryUrl>https://github.com/phkiener/Swallow.Cli</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 

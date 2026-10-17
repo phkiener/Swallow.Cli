@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Swallow.Console\Swallow.Console.csproj" />
+    <ProjectReference Include="..\..\src\Swallow.Cli\Swallow.Cli.csproj" />
   </ItemGroup>
 
 </Project>

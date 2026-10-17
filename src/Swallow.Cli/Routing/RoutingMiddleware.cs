@@ -1,6 +1,6 @@
-using Swallow.Console.Invocation;
+using Swallow.Cli.Invocation;
 
-namespace Swallow.Console.Routing;
+namespace Swallow.Cli.Routing;
 
 public sealed class RoutingMiddleware(IReadOnlyCollection<Entrypoint> entrypoints) : IMiddleware
 {

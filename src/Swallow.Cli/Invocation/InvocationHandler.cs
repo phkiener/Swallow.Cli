@@ -1,3 +1,3 @@
-namespace Swallow.Console.Invocation;
+namespace Swallow.Cli.Invocation;
 
 public delegate Task InvocationHandler(InvocationContext context);
