@@ -23,6 +23,24 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
         configurationRoot = configuration.Build();
     }
 
+    public void UseMiddleware(Func<InvocationContext, InvocationHandler, Task> handler)
+    {
+        var previousHandler = appHandler;
+        appHandler = ctx => handler(ctx, previousHandler);
+    }
+
+    public void Use(IMiddleware middleware)
+    {
+        var previousHandler = appHandler;
+        appHandler = ctx => middleware.InvokeAsync(ctx, previousHandler);
+    }
+
+    public void Use<TMiddleware>() where TMiddleware : IMiddleware
+    {
+        var previousHandler = appHandler;
+        appHandler = ctx => ctx.ServiceProvider.GetRequiredService<TMiddleware>().InvokeAsync(ctx, previousHandler);
+    }
+
     public void MapDefault(Delegate handler)
     {
         entrypoints.Add(Entrypoint.Parse(handler));
@@ -34,8 +52,7 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
 
         try
         {
-            var initialHandler = appHandler;
-            appHandler = ctx => new RoutingMiddleware(entrypoints).InvokeAsync(ctx, initialHandler);
+            Use(new RoutingMiddleware(entrypoints));
 
             var context = new InvocationContext
             {
