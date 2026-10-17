@@ -40,6 +40,7 @@ public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
             var context = new InvocationContext
             {
                 Arguments = args,
+                ServiceProvider = serviceProvider,
                 CancellationToken = cancellationTokenSource.Token,
             };
 
