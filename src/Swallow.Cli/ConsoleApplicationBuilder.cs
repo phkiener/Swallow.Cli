@@ -1,21 +1,28 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Swallow.Cli;
 
+/// <summary>
+/// A builder for configuring a <see cref="ConsoleApplication"/>.
+/// </summary>
 public sealed class ConsoleApplicationBuilder
 {
+    /// <summary>
+    /// A <see cref="IServiceCollection"/> to register any services to be resolved.
+    /// </summary>
     public IServiceCollection Services { get; }
-    public IConfigurationBuilder Configuration { get; }
 
-    internal ConsoleApplicationBuilder(string displayName, string applicationName)
+    internal ConsoleApplicationBuilder()
     {
         Services = new ServiceCollection();
-        Configuration = new ConfigurationBuilder();
     }
 
+    /// <summary>
+    /// Construct a finished <see cref="ConsoleApplication"/> from this builder.
+    /// </summary>
+    /// <returns>The built application.</returns>
     public ConsoleApplication Build()
     {
-        return new ConsoleApplication(Services, Configuration);
+        return new ConsoleApplication(Services);
     }
 }

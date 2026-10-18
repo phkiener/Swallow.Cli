@@ -1,7 +1,7 @@
 using Swallow.Cli;
-using Swallow.Cli.Routing;
+using Swallow.Cli.Abstractions.Routing;
 
-var builder = ConsoleApplication.CreateBuilder("demo");
+var builder = ConsoleApplication.CreateBuilder();
 var app = builder.Build();
 
 app.UseMiddleware((ctx, next) =>
@@ -10,7 +10,7 @@ app.UseMiddleware((ctx, next) =>
     return next(ctx);
 });
 
-app.MapDefault(([Flag(ShortName = 'h', LongName = "help")] bool showHelp) => Console.WriteLine("demo [-h|--help]"));
-app.MapDefault(() => Console.WriteLine("Hello World!"));
+app.Map(([Flag(ShortName = 'h', LongName = "help", IsRequired = true)] bool showHelp) => Console.WriteLine("demo [-h|--help]"));
+app.Map(() => Console.WriteLine("Hello World!"));
 
 return await app.RunAsync(args);

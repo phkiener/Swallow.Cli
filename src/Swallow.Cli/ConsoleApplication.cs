@@ -1,102 +1,109 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swallow.Cli.Invocation;
+using Swallow.Cli.Abstractions;
+using Swallow.Cli.Internal;
 using Swallow.Cli.Routing;
 
 namespace Swallow.Cli;
 
-public sealed class ConsoleApplication : IDisposable, IAsyncDisposable
+/// <summary>
+/// A console application capable of invoking <see cref="IEntrypoint"/>s.
+/// </summary>
+public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
 {
     private readonly ServiceProvider serviceProvider;
-    private readonly IConfigurationRoot configurationRoot;
-    private readonly CancellationTokenSource cancellationTokenSource = new();
 
-    private readonly List<Entrypoint> entrypoints = [];
-    private InvocationHandler appHandler = static ctx => ctx.Entrypoint?.Handler.Invoke(ctx) ?? Task.CompletedTask;
+    private readonly List<IEntrypoint> entrypoints = [];
+    private readonly List<Func<InvocationDelegate, InvocationDelegate>> middlewares = [];
 
-    public IServiceProvider ServiceProvider => serviceProvider;
-    public IConfiguration Configuration => configurationRoot;
-
-    internal ConsoleApplication(IServiceCollection services, IConfigurationBuilder configuration)
+    internal ConsoleApplication(IServiceCollection services)
     {
         serviceProvider = services.BuildServiceProvider();
-        configurationRoot = configuration.Build();
     }
 
-    public void UseMiddleware(Func<InvocationContext, InvocationHandler, Task> handler)
-    {
-        var previousHandler = appHandler;
-        appHandler = ctx => handler(ctx, previousHandler);
-    }
-
-    public void Use(IMiddleware middleware)
-    {
-        var previousHandler = appHandler;
-        appHandler = ctx => middleware.InvokeAsync(ctx, previousHandler);
-    }
-
-    public void Use<TMiddleware>() where TMiddleware : IMiddleware
-    {
-        var previousHandler = appHandler;
-        appHandler = ctx => ctx.ServiceProvider.GetRequiredService<TMiddleware>().InvokeAsync(ctx, previousHandler);
-    }
-
-    public void MapDefault(Delegate handler)
-    {
-        entrypoints.Add(Entrypoint.Parse(handler));
-    }
-
+    /// <summary>
+    /// Start a new invocation in this application.
+    /// </summary>
+    /// <param name="args">The arguments to use.</param>
+    /// <returns>The exit code of the invocation.</returns>
     public async Task<int> RunAsync(string[] args)
     {
-        System.Console.CancelKeyPress += CancelApplication;
+        var cancellationTokenSource = new CancellationTokenSource();
+        Console.CancelKeyPress += CancelInvocation;
 
         try
         {
-            Use(new RoutingMiddleware(entrypoints));
+            var executionPipeline = BuildExecutionPipeline(middlewares, entrypoints);
 
-            var context = new InvocationContext
-            {
-                Arguments = args,
-                ServiceProvider = serviceProvider, // TODO: Scope, probably.
-                CancellationToken = cancellationTokenSource.Token,
-            };
+            await using var scope = serviceProvider.CreateAsyncScope();
+            var context = new DefaultConsoleContext(args, scope.ServiceProvider, cancellationTokenSource);
 
-            await appHandler.Invoke(context);
-
-            return context.ExitCode ?? 0;
+            await executionPipeline.Invoke(context);
+            return context.Result.ExitCode ?? 0;
         }
         catch (Exception e)
         {
-            System.Console.WriteLine(e);
-            return 1;
+            Console.WriteLine($"Unhandled exception: {e}");
+            return 255;
         }
         finally
         {
-            System.Console.CancelKeyPress -= CancelApplication;
+            Console.CancelKeyPress -= CancelInvocation;
+            cancellationTokenSource.Dispose();
         }
-    }
 
-    private void CancelApplication(object? sender, ConsoleCancelEventArgs e)
-    {
-        var shouldStop = e.Cancel is false;
-        if (shouldStop)
+        void CancelInvocation(object? sender, ConsoleCancelEventArgs e)
         {
-            cancellationTokenSource.Cancel();
+            // Apparently, a cancel can be cancelled so that it doesn't cancel the application. What.
+            var shouldStop = e.Cancel is false;
+            if (shouldStop)
+            {
+                try
+                {
+                    cancellationTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Eh, doesn't matter. Shouldn't happen, but if it does - so what.
+                }
+            }
         }
     }
 
+    private static InvocationDelegate BuildExecutionPipeline(IReadOnlyList<Func<InvocationDelegate, InvocationDelegate>> middlewares, IReadOnlyList<IEntrypoint> entrypoints)
+    {
+        InvocationDelegate appDelegate = InvokeEntrypoint;
+
+        for (var i = middlewares.Count - 1; i >= 0; i--)
+        {
+            appDelegate = middlewares[i](appDelegate);
+        }
+
+        var routing = new EntrypointRoutingMiddleware(entrypoints);
+        return ctx => routing.InvokeAsync(ctx, appDelegate);
+
+        static Task InvokeEntrypoint(ConsoleContext context)
+        {
+            return context.Entrypoint is null
+                ? throw new InvalidOperationException("Execution pipeline did not set an entrypoint to be invoked.")
+                : context.Entrypoint.InvokeAsync(context);
+        }
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
         serviceProvider.Dispose();
-        cancellationTokenSource.Dispose();
     }
 
+    /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         await serviceProvider.DisposeAsync();
-        cancellationTokenSource.Dispose();
     }
 
-    public static ConsoleApplicationBuilder CreateBuilder(string displayName, string? applicationName = null)
-        => new(displayName, applicationName ?? displayName);
+    /// <summary>
+    /// Create a new <see cref="ConsoleApplicationBuilder"/>.
+    /// </summary>
+    /// <returns>The new builder.</returns>
+    public static ConsoleApplicationBuilder CreateBuilder() => new();
 }
