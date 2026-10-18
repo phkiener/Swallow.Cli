@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Swallow.Cli.Abstractions;
 using Swallow.Cli.Abstractions.Routing;
 
@@ -50,7 +51,7 @@ public sealed class DelegateEntrypoint : IEntrypoint
     private Task InvokeDelegate(ConsoleContext consoleContext)
     {
         var parameters = underlyingHandler.Method.GetParameters();
-        var arguments = new object[parameters.Length];
+        var arguments = new object?[parameters.Length];
 
         for (var i = 0; i < parameters.Length; i++)
         {
@@ -66,6 +67,46 @@ public sealed class DelegateEntrypoint : IEntrypoint
                 arguments[i] = consoleContext.RouteValues?.EnabledFlags.Contains(flag) ?? false;
 
                 continue;
+            }
+
+            // TODO: FromServices and FromKeyedServices are kinda duplicated...
+            var fromServices = attributes.OfType<FromServicesAttribute>().FirstOrDefault();
+            if (fromServices is not null)
+            {
+                var resolvedService = consoleContext.Services.GetService(type);
+                if (resolvedService is not null)
+                {
+                    arguments[i] = resolvedService;
+                    continue;
+                }
+
+                if (parameter.HasDefaultValue)
+                {
+                    arguments[i] = parameter.DefaultValue;
+                }
+
+                throw new InvalidOperationException($"[FromKeyedServices] parameter of type {type} not defined in the {nameof(IServiceProvider)} and no default value is provided.");
+            }
+
+            var fromKeyedServices = attributes.OfType<FromKeyedServicesAttribute>().FirstOrDefault();
+            if (fromKeyedServices is not null)
+            {
+                var resolvedService = fromKeyedServices.LookupMode is ServiceKeyLookupMode.ExplicitKey
+                    ? consoleContext.Services.GetService(type)
+                    : consoleContext.Services.GetKeyedService(type, fromKeyedServices.Key);
+
+                if (resolvedService is not null)
+                {
+                    arguments[i] = resolvedService;
+                    continue;
+                }
+
+                if (parameter.HasDefaultValue)
+                {
+                    arguments[i] = parameter.DefaultValue;
+                }
+
+                throw new InvalidOperationException($"[FromKeyedServices] parameter of type {type} not defined in the {nameof(IServiceProvider)} and no default value is provided.");
             }
 
             if (type == typeof(ConsoleContext))
