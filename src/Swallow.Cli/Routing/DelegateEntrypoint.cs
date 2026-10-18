@@ -26,7 +26,7 @@ public sealed class DelegateEntrypoint : IEntrypoint
     public InvocationDelegate Delegate { get; }
 
     /// <summary>
-    /// Extract an <see cref="DelegateEntrypoint"/> based on the given <see cref="handler"/>.
+    /// Extract an <see cref="DelegateEntrypoint"/> based on the given <paramref name="handler"/>.
     /// The <see cref="RouteParts"/> are extracted using the attributes on the parameters for the method.
     /// </summary>
     /// <param name="handler">The underlying method to invoke.</param>
@@ -83,17 +83,18 @@ public sealed class DelegateEntrypoint : IEntrypoint
                 if (parameter.HasDefaultValue)
                 {
                     arguments[i] = parameter.DefaultValue;
+                    continue;
                 }
 
-                throw new InvalidOperationException($"[FromKeyedServices] parameter of type {type} not defined in the {nameof(IServiceProvider)} and no default value is provided.");
+                throw new InvalidOperationException($"[FromServices] parameter of type {type} not defined in the {nameof(IServiceProvider)} and no default value is provided.");
             }
 
             var fromKeyedServices = attributes.OfType<FromKeyedServicesAttribute>().FirstOrDefault();
             if (fromKeyedServices is not null)
             {
                 var resolvedService = fromKeyedServices.LookupMode is ServiceKeyLookupMode.ExplicitKey
-                    ? consoleContext.Services.GetService(type)
-                    : consoleContext.Services.GetKeyedService(type, fromKeyedServices.Key);
+                    ? consoleContext.Services.GetKeyedService(type, fromKeyedServices.Key)
+                    : consoleContext.Services.GetService(type);
 
                 if (resolvedService is not null)
                 {
@@ -104,6 +105,7 @@ public sealed class DelegateEntrypoint : IEntrypoint
                 if (parameter.HasDefaultValue)
                 {
                     arguments[i] = parameter.DefaultValue;
+                    continue;
                 }
 
                 throw new InvalidOperationException($"[FromKeyedServices] parameter of type {type} not defined in the {nameof(IServiceProvider)} and no default value is provided.");
