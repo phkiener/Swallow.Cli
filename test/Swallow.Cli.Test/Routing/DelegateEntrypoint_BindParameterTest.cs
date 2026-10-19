@@ -6,10 +6,10 @@ using Swallow.Console.Arguments;
 
 namespace Swallow.Console.Test.Routing;
 
-public sealed class DelegateEntrypointTest
+public sealed class DelegateEntrypoint_BindParameterTest
 {
     [Test]
-    public async Task BindsParameter_ConsoleContext()
+    public async Task ConsoleContext()
     {
         ConsoleContext? capturedContext = null;
 
@@ -21,7 +21,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_CancellationToken()
+    public async Task CancellationToken()
     {
         CancellationToken? capturedToken = null;
 
@@ -37,7 +37,7 @@ public sealed class DelegateEntrypointTest
     // so I'll skip these tests for now.
 
     [Test]
-    public async Task BindsParameter_FromServiceAndRegistered_WithoutDefault()
+    public async Task FromService_RegisteredWithoutDefault()
     {
         string? capturedText = null;
 
@@ -49,7 +49,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromServiceAndRegistered_WithDefault()
+    public async Task FromService_RegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -61,7 +61,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromServiceAndNotRegistered_WithoutDefault()
+    public async Task FromService_NotRegisteredWithoutDefault()
     {
         var entrypoint = DelegateEntrypoint.Create(void ([FromServices] string text) => {});
         var context = new TestConsoleContext();
@@ -73,7 +73,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromServiceAndNotRegistered_WithDefault()
+    public async Task FromService_NotRegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -85,7 +85,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceUnkeyedAndRegistered_WithoutDefault()
+    public async Task FromKeyedService_UnkeyedAndRegisteredWithoutDefault()
     {
         string? capturedText = null;
 
@@ -97,7 +97,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceUnkeyedAndRegistered_WithDefault()
+    public async Task FromKeyedService_UnkeyedAndRegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -109,7 +109,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceUnkeyedAndNotRegistered_WithoutDefault()
+    public async Task FromKeyedService_UnkeyedAndNotRegisteredWithoutDefault()
     {
         var entrypoint = DelegateEntrypoint.Create(void ([FromKeyedServices] string text) => {});
         var context = new TestConsoleContext();
@@ -121,7 +121,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceUnkeyedAndNotRegistered_WithDefault()
+    public async Task FromKeyedService_UnkeyedAndNotRegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -133,7 +133,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceNullKeyAndRegistered_WithoutDefault()
+    public async Task FromKeyedService_NullKeyAndRegisteredWithoutDefault()
     {
         string? capturedText = null;
 
@@ -145,7 +145,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceNullKeyAndRegistered_WithDefault()
+    public async Task FromKeyedService_NullKeyAndRegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -157,7 +157,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceNullKeyAndNotRegistered_WithoutDefault()
+    public async Task FromKeyedService_NullKeyAndNotRegisteredWithoutDefault()
     {
         var entrypoint = DelegateEntrypoint.Create(void ([FromKeyedServices(null)] string text) => {});
         var context = new TestConsoleContext();
@@ -169,7 +169,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceNullKeyAndNotRegistered_WithDefault()
+    public async Task FromKeyedService_NullKeyAndNotRegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -181,7 +181,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceWithKeyAndRegistered_WithoutDefault()
+    public async Task FromKeyedService_WithKeyAndRegisteredWithoutDefault()
     {
         string? capturedText = null;
 
@@ -193,7 +193,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceWithKeyAndRegistered_WithDefault()
+    public async Task FromKeyedService_WithKeyAndRegisteredWithDefault()
     {
         string? capturedText = null;
 
@@ -205,7 +205,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceWithKeyAndNotRegistered_WithoutDefault()
+    public async Task FromKeyedService_WithKeyAndNotRegisteredWithoutDefault()
     {
         var entrypoint = DelegateEntrypoint.Create(void ([FromKeyedServices(1)] string text) => {});
         var context = new TestConsoleContext();
@@ -217,7 +217,7 @@ public sealed class DelegateEntrypointTest
     }
 
     [Test]
-    public async Task BindsParameter_FromKeyedServiceWithKeyAndNotRegistered_WithDefault()
+    public async Task FromKeyedService_WithKeyAndNotRegisteredWithDefault()
     {
         string? capturedText = null;
 

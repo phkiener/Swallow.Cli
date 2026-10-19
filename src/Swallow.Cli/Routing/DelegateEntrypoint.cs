@@ -42,19 +42,34 @@ public sealed class DelegateEntrypoint : IEntrypoint
     /// <returns>The built <see cref="DelegateEntrypoint"/>.</returns>
     public static DelegateEntrypoint Create(ICommandData[] prefix, Delegate handler)
     {
-        var flags = new List<IFlagData>();
+        var parts = new List<IRoutePart>();
         foreach (var parameter in handler.Method.GetParameters())
         {
             var attributes = parameter.GetCustomAttributes(inherit: true);
-            var flag = attributes.OfType<IFlagData>().FirstOrDefault();
 
+            var flag = attributes.OfType<IFlagData>().FirstOrDefault();
             if (flag is not null)
             {
-                flags.Add(flag);
+                parts.Add(flag);
+                continue;
+            }
+
+            var option = attributes.OfType<IOptionData>().FirstOrDefault();
+            if (option is not null)
+            {
+                parts.Add(option);
+                continue;
+            }
+
+            var argument = attributes.OfType<IArgumentData>().FirstOrDefault();
+            if (argument is not null)
+            {
+                parts.Add(argument);
+                continue;
             }
         }
 
-        return new DelegateEntrypoint([..prefix, ..flags], handler);
+        return new DelegateEntrypoint([..prefix, ..parts], handler);
     }
 
     private Task InvokeDelegate(ConsoleContext consoleContext)
@@ -76,6 +91,18 @@ public sealed class DelegateEntrypoint : IEntrypoint
                 arguments[i] = consoleContext.RouteValues?.EnabledFlags.Contains(flag) ?? false;
 
                 continue;
+            }
+
+            var option = attributes.OfType<IOptionData>().FirstOrDefault();
+            if (option is not null)
+            {
+                throw new NotImplementedException("Options not handled yet.");
+            }
+
+            var argument = attributes.OfType<IArgumentData>().FirstOrDefault();
+            if (argument is not null)
+            {
+                throw new NotImplementedException("Arguments not handled yet.");
             }
 
             // TODO: FromServices and FromKeyedServices are kinda duplicated...
