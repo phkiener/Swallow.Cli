@@ -2,7 +2,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Swallow.Cli.Abstractions\Swallow.Cli.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Swallow.Cli.Test" />
   </ItemGroup>
 </Project>
