@@ -1,4 +1,5 @@
 using Swallow.Cli.Abstractions;
+using Swallow.Cli.Abstractions.Routing;
 using Swallow.Cli.Routing;
 
 namespace Swallow.Cli;
@@ -13,4 +14,16 @@ partial class ConsoleApplication
     {
         entrypoints.Add(DelegateEntrypoint.Create(handler));
     }
+
+    /// <summary>
+    /// Map an entrypoint based on the given <see cref="Delegate"/>.
+    /// </summary>
+    /// <param name="command">The command prefix which acticates the command.</param>
+    /// <param name="handler">The delegate to map as <see cref="IEntrypoint"/>.</param>
+    public void Map(string command, Delegate handler)
+    {
+        entrypoints.Add(DelegateEntrypoint.Create([new Command(command)], handler));
+    }
+
+    private sealed record Command(string Name) : ICommandData;
 }

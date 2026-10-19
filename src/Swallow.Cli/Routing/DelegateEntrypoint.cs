@@ -31,7 +31,16 @@ public sealed class DelegateEntrypoint : IEntrypoint
     /// </summary>
     /// <param name="handler">The underlying method to invoke.</param>
     /// <returns>The built <see cref="DelegateEntrypoint"/>.</returns>
-    public static DelegateEntrypoint Create(Delegate handler)
+    public static DelegateEntrypoint Create(Delegate handler) => Create([], handler);
+
+    /// <summary>
+    /// Extract an <see cref="DelegateEntrypoint"/> based on the given <paramref name="handler"/>.
+    /// The <see cref="RouteParts"/> are extracted using the attributes on the parameters for the method.
+    /// </summary>
+    /// <param name="prefix">A prefix for the <see cref="RouteParts"/>.</param>
+    /// <param name="handler">The underlying method to invoke.</param>
+    /// <returns>The built <see cref="DelegateEntrypoint"/>.</returns>
+    public static DelegateEntrypoint Create(ICommandData[] prefix, Delegate handler)
     {
         var flags = new List<IFlagData>();
         foreach (var parameter in handler.Method.GetParameters())
@@ -45,7 +54,7 @@ public sealed class DelegateEntrypoint : IEntrypoint
             }
         }
 
-        return new DelegateEntrypoint([..flags], handler);
+        return new DelegateEntrypoint([..prefix, ..flags], handler);
     }
 
     private Task InvokeDelegate(ConsoleContext consoleContext)
