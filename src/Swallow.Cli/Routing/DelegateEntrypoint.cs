@@ -69,6 +69,8 @@ public sealed class DelegateEntrypoint : IEntrypoint
             }
         }
 
+        // TODO: Handle overlap between flags and options; that's not allowed.
+
         return new DelegateEntrypoint([..prefix, ..parts], handler);
     }
 

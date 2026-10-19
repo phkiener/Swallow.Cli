@@ -7,33 +7,77 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
 {
     public Task InvokeAsync(ConsoleContext context, InvocationDelegate next)
     {
+        var tokens = Tokenizer.Tokenize(context.Invocation.Arguments).ToArray();
+
         foreach (var entrypoint in entrypoints)
         {
-            var flagInfo = entrypoint.RouteParts.OfType<IFlagData>().ToDictionary(static f => f, static _ => false);
-            foreach (var flag in flagInfo.Keys)
-            {
-                // TODO: Support for aliases, Windows-style (/) and multiple casing variants (-> UNIX-style with kebap, Windows-style with Pascal).
-                var shortName = flag.ShortName is '\0' ? null : $"-{flag.ShortName}";
-                var longName = flag.LongName is null ? null : $"--{flag.LongName}";
-
-                if (shortName is not null && context.Invocation.Arguments.Contains(shortName)
-                    || longName is not null && context.Invocation.Arguments.Contains(longName))
-                {
-                    flagInfo[flag] = true;
-                }
-            }
-
-            if (flagInfo.All(static kvp => kvp.Value || !kvp.Key.IsRequired))
+            if (IsMatch(tokens, entrypoint.RouteParts, out var routeValues))
             {
                 context.Entrypoint = entrypoint;
-
-                var enabledFlags = flagInfo.Where(static kvp => kvp.Value).Select(static kvp => kvp.Key);
-                context.RouteValues = new RouteValues(enabledFlags);
+                context.RouteValues = routeValues;
 
                 break;
             }
         }
 
         return next(context);
+    }
+
+    private static bool IsMatch(CommandlineToken[] tokens, IRoutePart[] routeParts, out RouteValues routeValues)
+    {
+        var tokenIndex = 0;
+
+        // First step: Match the prefix. This part is determined by the route itself.
+        foreach (var prefix in routeParts.OfType<ICommandData>())
+        {
+            ref var token = ref tokens[tokenIndex];
+            if (!token.Kind.HasFlag(TokenType.Command) || token.Text != prefix.Name)
+            {
+                routeValues = RouteValues.Empty;
+                return false;
+            }
+
+            tokenIndex++;
+        }
+
+        var flagResults = routeParts.OfType<IFlagData>().ToDictionary(static f => f, static _ => false);
+        var flagByShortName = flagResults.Keys
+            .Where(static f => f.ShortName != '\0')
+            .ToDictionary(static f => f.ShortName, static f => f);
+
+        var flagByLongName = flagResults.Keys
+            .Where(static f => f.LongName is not null)
+            .ToDictionary(static f => f.LongName!, static f => f);
+
+
+        // Next step: Match the tokens to the remaining parts. Just assume that there's no overlap between flags, first one wins.
+        for (; tokenIndex < tokens.Length; ++tokenIndex)
+        {
+            ref var token = ref tokens[tokenIndex];
+
+            if (token.Kind.HasFlag(TokenType.Flag))
+            {
+                if ((token.Text is [var symbol] && flagByShortName.TryGetValue(symbol, out var matchingFlag))
+                    || flagByLongName.TryGetValue(token.Text, out matchingFlag))
+                {
+                    flagResults[matchingFlag] = true;
+                    continue;
+                }
+            }
+
+            throw new NotImplementedException($"Token type {token.Kind} not implemented yet");
+        }
+
+        if (flagResults.All(static kvp => kvp.Value || !kvp.Key.IsRequired))
+        {
+            var enabledFlags = flagResults.Where(static kvp => kvp.Value).Select(static kvp => kvp.Key);
+
+            routeValues = new RouteValues(enabledFlags);
+            return true;
+        }
+
+
+        routeValues = RouteValues.Empty;
+        return false;
     }
 }
