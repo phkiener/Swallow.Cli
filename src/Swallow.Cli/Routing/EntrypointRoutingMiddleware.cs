@@ -49,6 +49,15 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
             .Where(static f => f.LongName is not null)
             .ToDictionary(static f => f.LongName!, static f => f);
 
+        var optionResults = routeParts.OfType<IOptionData>().ToDictionary(static f => f, static string? (_) => null);
+        var optionByShortName = optionResults.Keys
+            .Where(static f => f.ShortName != '\0')
+            .ToDictionary(static f => f.ShortName, static f => f);
+
+        var optionByLongName = optionResults.Keys
+            .Where(static f => f.LongName is not null)
+            .ToDictionary(static f => f.LongName!, static f => f);
+
 
         // Next step: Match the tokens to the remaining parts. Just assume that there's no overlap between flags, first one wins.
         for (; tokenIndex < tokens.Length; ++tokenIndex)
@@ -57,27 +66,49 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
 
             if (token.Kind.HasFlag(TokenType.Flag))
             {
-                if ((token.Text is [var symbol] && flagByShortName.TryGetValue(symbol, out var matchingFlag))
+                if ((token.Text is [var flagSymbol] && flagByShortName.TryGetValue(flagSymbol, out var matchingFlag))
                     || flagByLongName.TryGetValue(token.Text, out matchingFlag))
                 {
                     flagResults[matchingFlag] = true;
                     continue;
+                }
+
+                if ((token.Text is [var optionSymbol] && optionByShortName.TryGetValue(optionSymbol, out var matchingOption))
+                    || optionByLongName.TryGetValue(token.Text, out matchingOption))
+                {
+                    if (tokenIndex + 1 < tokens.Length)
+                    {
+                        ref var nextToken = ref tokens[tokenIndex + 1];
+                        if (nextToken.Kind.HasFlag(TokenType.OptionArgument))
+                        {
+                            optionResults[matchingOption] = nextToken.Text;
+                            tokenIndex += 1;
+
+                            continue;
+                        }
+                    }
                 }
             }
 
             throw new NotImplementedException($"Token type {token.Kind} not implemented yet");
         }
 
-        if (flagResults.All(static kvp => kvp.Value || !kvp.Key.IsRequired))
+        if (flagResults.Any(static kvp => kvp.Key.IsRequired && !kvp.Value))
         {
-            var enabledFlags = flagResults.Where(static kvp => kvp.Value).Select(static kvp => kvp.Key);
-
-            routeValues = new RouteValues(enabledFlags);
-            return true;
+            routeValues = RouteValues.Empty;
+            return false;
         }
 
+        if (optionResults.Any(static kvp => kvp.Key.IsRequired && kvp.Value is null))
+        {
+            routeValues = RouteValues.Empty;
+            return false;
+        }
 
-        routeValues = RouteValues.Empty;
-        return false;
+        var enabledFlags = flagResults.Where(static kvp => kvp.Value).Select(static kvp => kvp.Key);
+        var optionValues = optionResults.Where(static kvp => kvp.Value is not null).ToDictionary(static kvp => kvp.Key, static kvp => kvp.Value!);
+
+        routeValues = new RouteValues(enabledFlags, optionValues);
+        return true;
     }
 }

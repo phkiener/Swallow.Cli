@@ -8,7 +8,7 @@ namespace Swallow.Console.Test.Routing;
 public sealed class EntrypointRoutingMiddlewareTest
 {
     [Test]
-    public async Task Help_ShortName()
+    public async Task Flag_ShortName()
     {
         var context = await MatchRouteAsync(["-h"], [RoutePart.Flag(shortName: 'h')]);
 
@@ -17,7 +17,7 @@ public sealed class EntrypointRoutingMiddlewareTest
     }
 
     [Test]
-    public async Task Help_LongName()
+    public async Task Flag_LongName()
     {
         var context = await MatchRouteAsync(["--help"], [RoutePart.Flag(longName: "help")]);
 
@@ -26,7 +26,7 @@ public sealed class EntrypointRoutingMiddlewareTest
     }
 
     [Test]
-    public async Task Prefix()
+    public async Task Command()
     {
         var context = await MatchRouteAsync(["foo"], [RoutePart.Command("foo")]);
 
@@ -35,12 +35,49 @@ public sealed class EntrypointRoutingMiddlewareTest
     }
 
     [Test]
-    public async Task PrefixAndFlag()
+    public async Task CommandAndFlag()
     {
         var context = await MatchRouteAsync(["foo", "-f"], [RoutePart.Command("foo"), RoutePart.Flag(shortName: 'f')]);
 
         await Assert.That(context.Entrypoint).IsNotNull();
         await Assert.That(context.RouteValues?.EnabledFlags).Contains(static f => f is { ShortName: 'f' });
+    }
+
+    [Test]
+    public async Task Option_ShortName()
+    {
+        var context = await MatchRouteAsync(["-f", "bar"], [RoutePart.Option(shortName: 'f')]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.ShortName: 'f', Value: "bar" });
+    }
+
+    [Test]
+    public async Task Option_LongName()
+    {
+        var context = await MatchRouteAsync(["--foo", "bar"], [RoutePart.Option(longName: "foo")]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.LongName: "foo", Value: "bar" });
+    }
+
+    [Test]
+    public async Task CommandAndOption()
+    {
+        var context = await MatchRouteAsync(["foo", "--bar", "quuz"], [RoutePart.Command("foo"), RoutePart.Option(longName: "bar")]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.LongName: "bar", Value: "quuz" });
+    }
+
+    [Test]
+    public async Task FlagAndOption()
+    {
+        var context = await MatchRouteAsync(["-f", "--bar", "quuz"], [RoutePart.Flag(shortName: 'f'), RoutePart.Option(longName: "bar")]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.EnabledFlags).Contains(static f => f is { ShortName: 'f' });
+        await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.LongName: "bar", Value: "quuz" });
     }
 
     private static async Task<TestConsoleContext> MatchRouteAsync(string[] args, IRoutePart[] routeParts)
@@ -67,7 +104,11 @@ public sealed class EntrypointRoutingMiddlewareTest
         public static IFlagData Flag(char shortName = '\0', string? longName = null, bool isRequired = false)
             => new FlagData(shortName, longName, isRequired);
 
+        public static IOptionData Option(char shortName = '\0', string? longName = null, bool isRequired = false)
+            => new OptionData(shortName, longName, isRequired);
+
         private sealed record CommandData(string Name) : ICommandData;
         private sealed record FlagData(char ShortName, string? LongName, bool IsRequired) : IFlagData;
+        private sealed record OptionData(char ShortName, string? LongName, bool IsRequired) : IOptionData;
     }
 }
