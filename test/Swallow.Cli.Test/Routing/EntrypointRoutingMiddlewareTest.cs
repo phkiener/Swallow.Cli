@@ -80,6 +80,45 @@ public sealed class EntrypointRoutingMiddlewareTest
         await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.LongName: "bar", Value: "quuz" });
     }
 
+    [Test]
+    public async Task Argument()
+    {
+        var context = await MatchRouteAsync(["foo"], [RoutePart.Argument(isRequired: true)]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.Arguments).Contains(static kvp => kvp is { Key.IsRequired: true, Value: "foo" });
+    }
+
+    [Test]
+    public async Task CommandAndArgument()
+    {
+        var context = await MatchRouteAsync(["foo", "bar"], [RoutePart.Command("foo"), RoutePart.Argument(isRequired: true)]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.Arguments).Contains(static kvp => kvp is { Key.IsRequired: true, Value: "bar" });
+    }
+
+    [Test]
+    public async Task OptionAndArgument()
+    {
+        var context = await MatchRouteAsync(["-f", "foo", "bar"], [RoutePart.Option(shortName: 'f'), RoutePart.Argument(isRequired: true)]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.ShortName: 'f', Value: "foo" });
+        await Assert.That(context.RouteValues?.Arguments).Contains(static kvp => kvp is { Key.IsRequired: true, Value: "bar" });
+    }
+
+    [Test]
+    public async Task OptionFlagAndArgument()
+    {
+        var context = await MatchRouteAsync(["-f", "foo", "-b", "bar"], [RoutePart.Option(shortName: 'f'), RoutePart.Flag(shortName: 'b'), RoutePart.Argument(isRequired: true)]);
+
+        await Assert.That(context.Entrypoint).IsNotNull();
+        await Assert.That(context.RouteValues?.EnabledFlags).Contains(static flag => flag is { ShortName: 'b' });
+        await Assert.That(context.RouteValues?.OptionValues).Contains(static kvp => kvp is { Key.ShortName: 'f', Value: "foo" });
+        await Assert.That(context.RouteValues?.Arguments).Contains(static kvp => kvp is { Key.IsRequired: true, Value: "bar" });
+    }
+
     private static async Task<TestConsoleContext> MatchRouteAsync(string[] args, IRoutePart[] routeParts)
     {
         var context = new TestConsoleContext(args);
@@ -107,8 +146,11 @@ public sealed class EntrypointRoutingMiddlewareTest
         public static IOptionData Option(char shortName = '\0', string? longName = null, bool isRequired = false)
             => new OptionData(shortName, longName, isRequired);
 
+        public static IArgumentData Argument(bool isRequired = false) => new ArgumentData(isRequired);
+
         private sealed record CommandData(string Name) : ICommandData;
         private sealed record FlagData(char ShortName, string? LongName, bool IsRequired) : IFlagData;
         private sealed record OptionData(char ShortName, string? LongName, bool IsRequired) : IOptionData;
+        private sealed record ArgumentData(bool IsRequired) : IArgumentData;
     }
 }

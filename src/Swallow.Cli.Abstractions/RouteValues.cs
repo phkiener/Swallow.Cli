@@ -5,7 +5,7 @@ namespace Swallow.Cli.Abstractions;
 /// <summary>
 /// Parsed route information.
 /// </summary>
-public sealed class RouteValues(IEnumerable<IFlagData> flags, IDictionary<IOptionData, string> options)
+public sealed class RouteValues(IEnumerable<IFlagData> flags, IDictionary<IOptionData, string> options, IDictionary<IArgumentData, string> arguments)
 {
     /// <summary>
     /// All flags that have been enabled.
@@ -18,7 +18,12 @@ public sealed class RouteValues(IEnumerable<IFlagData> flags, IDictionary<IOptio
     public IReadOnlyDictionary<IOptionData, string> OptionValues { get; } = options.AsReadOnly();
 
     /// <summary>
+    /// All arguments that have been passed.
+    /// </summary>
+    public IReadOnlyDictionary<IArgumentData, string> Arguments { get; } = arguments.AsReadOnly();
+
+    /// <summary>
     /// A shared instance of empty route values.
     /// </summary>
-    public static RouteValues Empty { get; } = new([], new Dictionary<IOptionData, string>());
+    public static RouteValues Empty { get; } = new([], new Dictionary<IOptionData, string>(), new Dictionary<IArgumentData, string>());
 }
