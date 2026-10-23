@@ -45,6 +45,19 @@ internal static class Tokenizer
                 continue;
             }
 
+            if (arg.StartsWith("-"))
+            {
+                seenFlags = true;
+                flagBefore = true;
+
+                foreach (var flag in arg[1..])
+                {
+                    yield return new CommandlineToken(flag.ToString(), TokenType.Flag);
+                }
+
+                continue;
+            }
+
             if (arg is ['-', var symbol] && char.IsLetterOrDigit(symbol))
             {
                 seenFlags = true;

@@ -10,7 +10,7 @@ An experiment.
   - [x] Options (`-b FOO` / `--bar FOO`)
   - [x] Arguments
 - Advanced routing
-  - [ ] Compound options (`-bar foo` => `-b -a -r foo`)
+  - [x] Compound options (`-bar foo` => `-b -a -r foo`)
   - [x] Double-dash (`-f -- -b` => `-b` as argument)
   - [ ] Windows-style (`/` instead of `-`, PascalCase instead of kebap-case)
   - [ ] Binding options & arguments to custom types

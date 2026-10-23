@@ -49,6 +49,13 @@ public sealed class TokenizerTest
         await Assert.That(tokens).IsEquivalentTo([Argument("-f"), Argument("--bar"), Argument("value")]);
     }
 
+    [Test]
+    public async Task CompoundFlag_IsSplitApart()
+    {
+        var tokens = Tokenizer.Tokenize(["-abc", "value"]);
+        await Assert.That(tokens).IsEquivalentTo([Flag("a"), Flag("b"), Flag("c"), OptionArgumentOrArgument("value")]);
+    }
+
     private static CommandlineToken Flag(string content) => new(content, TokenType.Flag);
     private static CommandlineToken Argument(string content) => new(content, TokenType.Argument);
     private static CommandlineToken CommandOrArgument(string content) => new(content, TokenType.Command | TokenType.Argument);
