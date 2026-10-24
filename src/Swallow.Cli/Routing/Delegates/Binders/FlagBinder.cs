@@ -1,4 +1,3 @@
-using System.Reflection;
 using Swallow.Cli.Abstractions;
 using Swallow.Cli.Abstractions.Routing;
 
@@ -6,16 +5,16 @@ namespace Swallow.Cli.Routing.Delegates.Binders;
 
 internal sealed class FlagBinder : IDelegateParameterBinder
 {
-    public bool TryBind(ParameterInfo parameter, ConsoleContext context, out object? boundValue)
+    public bool TryBind(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
     {
-        var attribute = parameter.GetCustomAttribute<FlagAttribute>();
+        var attribute = bindingContext.Attributes.OfType<FlagAttribute>().FirstOrDefault();
         if (attribute == null)
         {
             boundValue = null;
             return false;
         }
 
-        if (parameter.ParameterType == typeof(bool) || parameter.ParameterType == typeof(bool?))
+        if (bindingContext.ValueType == typeof(bool) || bindingContext.ValueType == typeof(bool?))
         {
             boundValue = context.RouteValues?.EnabledFlags.Contains(attribute);
             return true;

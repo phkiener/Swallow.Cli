@@ -1,13 +1,12 @@
-using System.Reflection;
 using Swallow.Cli.Abstractions;
 
 namespace Swallow.Cli.Routing.Delegates.Binders;
 
 internal sealed class CancellationTokenBinder : IDelegateParameterBinder
 {
-    public bool TryBind(ParameterInfo parameter, ConsoleContext context, out object? boundValue)
+    public bool TryBind(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
     {
-        if (parameter.ParameterType == typeof(CancellationToken))
+        if (bindingContext.ValueType == typeof(CancellationToken))
         {
             boundValue = context.Aborted;
             return true;

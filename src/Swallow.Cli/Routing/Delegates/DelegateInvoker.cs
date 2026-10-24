@@ -24,10 +24,11 @@ internal sealed class DelegateInvoker
         {
             var parameter = parameters[i];
             var bindingSucceeded = false;
+            var bindingContext = new BindingContext(parameter);
 
             foreach (var binder in binders)
             {
-                if (binder.TryBind(parameter, context, out var value))
+                if (binder.TryBind(bindingContext, context, out var value))
                 {
                     arguments[i] = value;
                     bindingSucceeded = true;

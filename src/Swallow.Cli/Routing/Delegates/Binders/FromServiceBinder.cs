@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Swallow.Cli.Abstractions;
 using Swallow.Cli.Abstractions.Routing;
@@ -7,54 +6,54 @@ namespace Swallow.Cli.Routing.Delegates.Binders;
 
 internal sealed class FromServiceBinder : IDelegateParameterBinder
 {
-    public bool TryBind(ParameterInfo parameter, ConsoleContext context, out object? boundValue)
+    public bool TryBind(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
     {
-        return TryBindFromServices(parameter, context, out boundValue)
-               || TryBindFromKeyedServices(parameter, context, out boundValue);
+        return TryBindFromServices(bindingContext, context, out boundValue)
+               || TryBindFromKeyedServices(bindingContext, context, out boundValue);
     }
 
-    private static bool TryBindFromServices(ParameterInfo parameter, ConsoleContext context, out object? boundValue)
+    private static bool TryBindFromServices(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
     {
-        var attribute = parameter.GetCustomAttribute<FromServicesAttribute>();
+        var attribute = bindingContext.Attributes.OfType<FromServicesAttribute>().FirstOrDefault();
         if (attribute == null)
         {
             boundValue = null;
             return false;
         }
 
-        boundValue = BindFromServiceProvider(parameter, context);
+        boundValue = BindFromServiceProvider(bindingContext, context);
         return true;
     }
 
-    private static bool TryBindFromKeyedServices(ParameterInfo parameter, ConsoleContext context, out object? boundValue)
+    private static bool TryBindFromKeyedServices(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
     {
-        var attribute = parameter.GetCustomAttribute<FromKeyedServicesAttribute>();
+        var attribute = bindingContext.Attributes.OfType<FromKeyedServicesAttribute>().FirstOrDefault();
         if (attribute == null)
         {
             boundValue = null;
             return false;
         }
 
-        boundValue = BindFromServiceProvider(parameter, context, attribute.Key);
+        boundValue = BindFromServiceProvider(bindingContext, context, attribute.Key);
         return true;
     }
 
-    private static object? BindFromServiceProvider(ParameterInfo parameter, ConsoleContext context, object? key = null)
+    private static object? BindFromServiceProvider(BindingContext bindingContext, ConsoleContext context, object? key = null)
     {
         var resolvedValue = key is null
-            ? context.Services.GetKeyedService(parameter.ParameterType, key)
-            : context.Services.GetService(parameter.ParameterType);
+            ? context.Services.GetKeyedService(bindingContext.ValueType, key)
+            : context.Services.GetService(bindingContext.ValueType);
 
         if (resolvedValue is not null)
         {
             return resolvedValue;
         }
 
-        if (parameter.HasDefaultValue)
+        if (bindingContext.HasDefaultValue)
         {
-            return parameter.DefaultValue;
+            return bindingContext.DefaultValue;
         }
 
-        throw new InvalidOperationException($"Cannot resolve {parameter.ParameterType} from service collection");
+        throw new InvalidOperationException($"Cannot resolve {bindingContext.ValueType} from service collection");
     }
 }
