@@ -38,7 +38,7 @@ internal sealed class FromServiceBinder : IDelegateParameterBinder
 
     private static object? BindFromServiceProvider(BindingContext bindingContext, ConsoleContext context, object? key = null)
     {
-        var resolvedValue = key is null
+        var resolvedValue = key is not null
             ? context.Services.GetKeyedService(bindingContext.ValueType, key)
             : context.Services.GetService(bindingContext.ValueType);
 

@@ -12,6 +12,14 @@ internal sealed class BindingContext
         Attributes = parameter.GetCustomAttributes().ToArray();
     }
 
+    internal BindingContext(Type valueType, IReadOnlyCollection<Attribute> attributes, bool hasDefaultValue, object? defaultValue)
+    {
+        ValueType = valueType;
+        HasDefaultValue = hasDefaultValue;
+        DefaultValue = defaultValue;
+        Attributes = attributes.ToArray();
+    }
+
     public Type ValueType { get; }
     public IReadOnlyCollection<Attribute> Attributes { get; }
     public bool HasDefaultValue { get; }
