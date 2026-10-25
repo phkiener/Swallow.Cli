@@ -11,7 +11,6 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
 {
     private readonly ServiceProvider serviceProvider;
 
-    private readonly List<IEntrypoint> entrypoints = [];
     private readonly List<Func<InvocationDelegate, InvocationDelegate>> middlewares = [];
 
     internal ConsoleApplication(IServiceCollection services)
@@ -31,6 +30,7 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
 
         try
         {
+            var entrypoints = dataSources.SelectMany(ds => ds.GetEntrypoints()).ToList();
             var executionPipeline = BuildExecutionPipeline(middlewares, entrypoints);
 
             await using var scope = serviceProvider.CreateAsyncScope();
