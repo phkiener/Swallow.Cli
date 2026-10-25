@@ -6,6 +6,7 @@
     <ProjectReference Include="..\..\src\Swallow.Cli\Swallow.Cli.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="JetBrains.dotCover.Framework" />
     <PackageReference Include="TUnit" />
   </ItemGroup>
 </Project>

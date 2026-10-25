@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="JetBrains.dotCover.Framework" Version="1.0.2" />
     <PackageVersion Include="TUnit" Version="1.68.17" />
   </ItemGroup>
 </Project>
