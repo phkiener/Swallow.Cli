@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions.Routing;
+namespace Swallow.Cli.Routing;
 
 /// <summary>
 /// Contains a list of <see cref="IEntrypointDataSource"/>, each providing its own <see cref="IEntrypoint"/>s.

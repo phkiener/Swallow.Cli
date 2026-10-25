@@ -1,5 +1,3 @@
-using Swallow.Cli.Abstractions.Routing;
-
 namespace Swallow.Cli.Routing.Delegates;
 
 internal sealed class DelegateParser

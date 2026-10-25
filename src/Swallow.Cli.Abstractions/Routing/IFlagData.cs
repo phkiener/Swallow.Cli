@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions.Routing;
+namespace Swallow.Cli.Routing;
 
 /// <summary>
 /// Information about a flag, i.e. a setting that can be enabled.

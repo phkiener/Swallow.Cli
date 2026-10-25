@@ -1,5 +1,4 @@
 using System.Reflection;
-using Swallow.Cli.Abstractions;
 
 namespace Swallow.Cli.Routing.Delegates;
 

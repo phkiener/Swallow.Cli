@@ -1,5 +1,5 @@
 using Swallow.Cli;
-using Swallow.Cli.Abstractions.Routing;
+using Swallow.Cli.Routing;
 
 var builder = ConsoleApplication.CreateBuilder();
 var app = builder.Build();

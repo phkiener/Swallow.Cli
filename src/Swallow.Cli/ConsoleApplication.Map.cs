@@ -1,5 +1,3 @@
-using Swallow.Cli.Abstractions;
-using Swallow.Cli.Abstractions.Routing;
 using Swallow.Cli.Routing;
 
 namespace Swallow.Cli;

@@ -1,5 +1,3 @@
-using Swallow.Cli.Abstractions;
-
 namespace Swallow.Cli.Routing.Delegates.Binders;
 
 internal sealed class ConsoleContextBinder : IDelegateParameterBinder

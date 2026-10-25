@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Swallow.Cli.Abstractions;
 using Swallow.Cli.Internal;
 
 namespace Swallow.Cli;

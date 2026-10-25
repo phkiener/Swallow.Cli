@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Swallow.Cli.Abstractions;
-using Swallow.Cli.Abstractions.Routing;
+using Swallow.Cli;
 using Swallow.Cli.Routing;
 using Swallow.Console.Arguments;
 

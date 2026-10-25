@@ -1,4 +1,4 @@
-using Swallow.Cli.Abstractions.Routing;
+using Swallow.Cli.Routing;
 using Swallow.Cli.Routing.Delegates;
 
 namespace Swallow.Console.Test.Routing.Delegates;

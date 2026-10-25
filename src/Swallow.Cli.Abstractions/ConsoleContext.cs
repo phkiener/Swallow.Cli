@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions;
+namespace Swallow.Cli;
 
 /// <summary>
 /// The context for the invocation of a console command.

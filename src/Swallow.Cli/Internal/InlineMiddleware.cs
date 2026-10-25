@@ -1,5 +1,3 @@
-using Swallow.Cli.Abstractions;
-
 namespace Swallow.Cli.Internal;
 
 internal sealed class InlineMiddleware(Func<ConsoleContext, InvocationDelegate, Task> definition) : IMiddleware

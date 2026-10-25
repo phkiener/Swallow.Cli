@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions.Routing;
+namespace Swallow.Cli.Routing;
 
 /// <summary>
 /// A plain marker interface for all objects that can make up a route to an <see cref="IEntrypoint"/>.

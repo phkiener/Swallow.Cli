@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions.Routing;
+namespace Swallow.Cli.Routing;
 
 /// <summary>
 /// An option, i.e. a <see cref="IFlagData"/> with a value.

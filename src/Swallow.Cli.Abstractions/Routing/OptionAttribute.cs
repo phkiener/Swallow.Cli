@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions.Routing;
+namespace Swallow.Cli.Routing;
 
 /// <summary>
 /// An attribute that defines an option for an <see cref="IEntrypoint"/>.

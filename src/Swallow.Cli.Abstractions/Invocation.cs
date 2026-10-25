@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions;
+namespace Swallow.Cli;
 
 /// <summary>
 /// An invocation of a commandline application.

@@ -1,4 +1,3 @@
-using Swallow.Cli.Abstractions;
 using Swallow.Cli.Routing.Delegates.Binders;
 
 namespace Swallow.Cli.Routing.Delegates;

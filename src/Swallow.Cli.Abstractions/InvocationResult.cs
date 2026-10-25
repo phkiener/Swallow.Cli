@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions;
+namespace Swallow.Cli;
 
 /// <summary>
 /// The result of an invocation.

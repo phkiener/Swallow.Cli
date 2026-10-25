@@ -1,6 +1,6 @@
-using Swallow.Cli.Abstractions.Routing;
+using Swallow.Cli.Routing;
 
-namespace Swallow.Cli.Abstractions;
+namespace Swallow.Cli;
 
 /// <summary>
 /// An entrypoint that may be invoked and routed to.

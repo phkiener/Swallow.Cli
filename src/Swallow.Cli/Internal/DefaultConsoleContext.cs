@@ -1,5 +1,3 @@
-using Swallow.Cli.Abstractions;
-
 namespace Swallow.Cli.Internal;
 
 internal sealed class DefaultConsoleContext(

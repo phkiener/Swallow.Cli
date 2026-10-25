@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Abstractions;
+namespace Swallow.Cli;
 
 /// <summary>
 /// A delegate executing a command based on a <see cref="ConsoleContext"/>.
