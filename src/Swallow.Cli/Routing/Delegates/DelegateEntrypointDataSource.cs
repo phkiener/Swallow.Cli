@@ -2,27 +2,25 @@ namespace Swallow.Cli.Routing.Delegates;
 
 internal sealed class DelegateEntrypointDataSource : IEntrypointDataSource
 {
-    private readonly List<Delegate> delegates = [];
+    private readonly List<IEntrypoint> entrypoints = [];
     private readonly DelegateParser parser = new();
     private readonly DelegateInvoker invoker = new();
 
-    private IReadOnlyCollection<IEntrypoint>? resolvedEntrypoints;
-
-    public IReadOnlyCollection<IEntrypoint> GetEntrypoints()
-    {
-        resolvedEntrypoints ??= delegates.Select(BuildEntrypoint).ToList();
-        return resolvedEntrypoints;
-    }
+    public IReadOnlyCollection<IEntrypoint> GetEntrypoints() => entrypoints;
 
     public void AddDelegate(Delegate @delegate)
     {
-        delegates.Add(@delegate);
+        AddDelegate([], @delegate);
     }
 
-    private IEntrypoint BuildEntrypoint(Delegate @delegate)
+    public void AddDelegate(string[] prefix, Delegate @delegate)
     {
+        var command = prefix.Select(static p => new CommandData(p));
         var route = parser.ParseRoute(@delegate);
 
-        return new DelegateEntrypoint(route, c => invoker.InvokeDelegate(@delegate, c));
+        var entrypoint = new DelegateEntrypoint([..command, ..route], c => invoker.InvokeDelegate(@delegate, c));
+        entrypoints.Add(entrypoint);
     }
+
+    private sealed record CommandData(string Name) : ICommandData;
 }
