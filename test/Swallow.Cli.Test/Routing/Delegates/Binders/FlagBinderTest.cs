@@ -23,10 +23,19 @@ public sealed class FlagBinderTest
     }
 
     [Test]
-    public void ThrowsException_WhenValueIsNotBoolean()
+    public void ThrowsException_WhenValueIsNotBindable()
     {
         var context = new TestConsoleContext();
         var bindingContext = new BindingContext(typeof(int), [new FlagAttribute()], false, null);
+
+        Assert.Throws<InvalidOperationException>(() => binder.TryBind(bindingContext, context, out _));
+    }
+
+    [Test]
+    public async Task ThrowsException_WhenRequiredFlagIsNotGiven()
+    {
+        var context = new TestConsoleContext();
+        var bindingContext = new BindingContext(typeof(bool), [new FlagAttribute { IsRequired = true }], false, null);
 
         Assert.Throws<InvalidOperationException>(() => binder.TryBind(bindingContext, context, out _));
     }

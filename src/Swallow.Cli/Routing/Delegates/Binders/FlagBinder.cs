@@ -1,24 +1,22 @@
 namespace Swallow.Cli.Routing.Delegates.Binders;
 
-internal sealed class FlagBinder : IDelegateParameterBinder
+internal sealed class FlagBinder : ParameterBinderBase<bool>
 {
-    public bool TryBind(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
+    protected override bool TryGetSourceValue(BindingContext bindingContext, ConsoleContext context, out bool value)
     {
         var attribute = bindingContext.Attributes.OfType<FlagAttribute>().FirstOrDefault();
         if (attribute == null)
         {
-            boundValue = null;
+            value = false;
             return false;
         }
 
-        if (bindingContext.ValueType == typeof(bool) || bindingContext.ValueType == typeof(bool?))
+        value = context.RouteValues.EnabledFlags.Contains(attribute);
+        if (!value && attribute.IsRequired)
         {
-            boundValue = context.RouteValues?.EnabledFlags.Contains(attribute);
-            return true;
+            throw new InvalidOperationException($"Required flag {attribute} is not enabled.");
         }
 
-        // TODO: BindConverter bool -> parameter.ParameterType.
-
-        throw new InvalidOperationException($"{nameof(FlagAttribute)} can only be applied to parameters of type {nameof(Boolean)}");
+        return true;
     }
 }

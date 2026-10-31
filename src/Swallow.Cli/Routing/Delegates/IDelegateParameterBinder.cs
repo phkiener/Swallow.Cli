@@ -4,15 +4,9 @@ namespace Swallow.Cli.Routing.Delegates;
 
 internal sealed class BindingContext
 {
-    internal BindingContext(ParameterInfo parameter)
-    {
-        ValueType = parameter.ParameterType;
-        HasDefaultValue = parameter.HasDefaultValue;
-        DefaultValue = parameter.DefaultValue;
-        Attributes = parameter.GetCustomAttributes().ToArray();
-    }
+    internal BindingContext(ParameterInfo parameter) : this(parameter.ParameterType, parameter.GetCustomAttributes(), parameter.HasDefaultValue, parameter.DefaultValue) { }
 
-    internal BindingContext(Type valueType, IReadOnlyCollection<Attribute> attributes, bool hasDefaultValue, object? defaultValue)
+    internal BindingContext(Type valueType, IEnumerable<Attribute> attributes, bool hasDefaultValue, object? defaultValue)
     {
         ValueType = valueType;
         HasDefaultValue = hasDefaultValue;
