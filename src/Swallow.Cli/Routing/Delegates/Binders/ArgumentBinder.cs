@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Swallow.Cli.Routing.Delegates.Binders;
 
 internal sealed class ArgumentBinder : IDelegateParameterBinder
@@ -11,14 +13,21 @@ internal sealed class ArgumentBinder : IDelegateParameterBinder
             return false;
         }
 
+        var rawValue = context.RouteValues?.Arguments.TryGetValue(attribute, out var value) ?? false ? value : null;
         if (bindingContext.ValueType == typeof(string))
         {
-            boundValue = context.RouteValues?.Arguments.TryGetValue(attribute, out var value) ?? false ? value : null;
+            boundValue = rawValue;
             return true;
         }
 
-        // TODO: BindConverter string -> parameter.ParameterType.
+        var converter = TypeDescriptor.GetConverter(bindingContext.ValueType);
+        if (converter.CanConvertFrom(typeof(string)) && rawValue is not null)
+        {
+            boundValue = converter.ConvertFrom(rawValue);
+            return true;
+        }
 
-        throw new InvalidOperationException($"{nameof(ArgumentAttribute)} can only be applied to parameters of type {nameof(String)}");
+        boundValue = null;
+        return false;
     }
 }

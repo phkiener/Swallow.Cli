@@ -70,4 +70,24 @@ public sealed class ArgumentBinderTest
         await Assert.That(result).IsTrue();
         await Assert.That(boundValue).IsNull();
     }
+
+    [Test]
+    public async Task BindsWithConverter_WhenTypeIsNotString()
+    {
+        var attribute = new ArgumentAttribute(isRequired: true);
+
+        var context = new TestConsoleContext
+        {
+            RouteValues = new RouteValues(
+                flags: [],
+                options: new Dictionary<IOptionData, string>(),
+                arguments: new Dictionary<IArgumentData, string> { [attribute] = "55.4" })
+        };
+
+        var bindingContext = new BindingContext(typeof(decimal), [attribute], false, null);
+        var result = binder.TryBind(bindingContext, context, out var boundValue);
+
+        await Assert.That(result).IsTrue();
+        await Assert.That(boundValue).IsEqualTo(55.4m);
+    }
 }
