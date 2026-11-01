@@ -11,7 +11,7 @@ internal sealed class OptionBinder : ParameterBinderBase<string?>
             return false;
         }
 
-        if (context.RouteValues.OptionValues.TryGetValue(attribute, out value))
+        if (context.RouteValues.TryGetValue(attribute, out value))
         {
             return true;
         }

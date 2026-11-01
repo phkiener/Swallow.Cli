@@ -20,7 +20,7 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
         return next(context);
     }
 
-    private static bool IsMatch(CommandlineToken[] tokens, IRoutePart[] routeParts, out RouteValues routeValues)
+    private static bool IsMatch(CommandlineToken[] tokens, IRoutePart[] routeParts, out RouteValueDictionary routeValues)
     {
         var tokenIndex = 0;
 
@@ -30,7 +30,7 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
             ref var token = ref tokens[tokenIndex];
             if (!token.Kind.HasFlag(TokenType.Command) || token.Text != prefix.Name)
             {
-                routeValues = RouteValues.Empty;
+                routeValues = RouteValueDictionary.Empty;
                 return false;
             }
 
@@ -99,33 +99,33 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
             }
 
             // Token cannot be matched. Goodbye.
-            routeValues = RouteValues.Empty;
+            routeValues = RouteValueDictionary.Empty;
             return false;
         }
 
         if (flagResults.Any(static kvp => kvp.Key.IsRequired && !kvp.Value))
         {
-            routeValues = RouteValues.Empty;
+            routeValues = RouteValueDictionary.Empty;
             return false;
         }
 
         if (optionResults.Any(static kvp => kvp.Key.IsRequired && kvp.Value is null))
         {
-            routeValues = RouteValues.Empty;
+            routeValues = RouteValueDictionary.Empty;
             return false;
         }
 
         if (arguments.Any(static arg => arg.Argument.IsRequired && arg.Value is null))
         {
-            routeValues = RouteValues.Empty;
+            routeValues = RouteValueDictionary.Empty;
             return false;
         }
 
-        var enabledFlags = flagResults.Where(static kvp => kvp.Value).Select(static kvp => kvp.Key);
-        var optionValues = optionResults.Where(static kvp => kvp.Value is not null).ToDictionary(static kvp => kvp.Key, static kvp => kvp.Value!);
-        var argumentValues = arguments.Where(static arg => arg.Value is not null).ToDictionary(static arg => arg.Argument, static arg => arg.Value!);
+        var enabledFlags = flagResults.Where(static kvp => kvp.Value).ToDictionary(static IRoutePart (kvp) => kvp.Key, _ => "true");
+        var optionValues = optionResults.Where(static kvp => kvp.Value is not null).ToDictionary(static IRoutePart (kvp) => kvp.Key, static kvp => kvp.Value!);
+        var argumentValues = arguments.Where(static arg => arg.Value is not null).ToDictionary(static  IRoutePart (arg) => arg.Argument, static arg => arg.Value!);
 
-        routeValues = new RouteValues(enabledFlags, optionValues, argumentValues);
+        routeValues = new RouteValueDictionary([..enabledFlags, ..optionValues, ..argumentValues]);
         return true;
     }
 

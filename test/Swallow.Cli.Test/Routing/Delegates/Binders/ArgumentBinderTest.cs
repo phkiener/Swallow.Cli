@@ -1,4 +1,3 @@
-using Swallow.Cli;
 using Swallow.Cli.Routing;
 using Swallow.Cli.Routing.Delegates;
 using Swallow.Cli.Routing.Delegates.Binders;
@@ -28,10 +27,7 @@ public sealed class ArgumentBinderTest
         var attribute = new ArgumentAttribute(isRequired: true);
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string>(),
-                arguments: new Dictionary<IArgumentData, string> { [attribute] = "value" })
+            RouteValues = new Dictionary<IRoutePart, string> { [attribute] = "value" }
         };
 
         var bindingContext = new BindingContext(typeof(TestConsoleContext), [attribute], false, null);
@@ -46,10 +42,7 @@ public sealed class ArgumentBinderTest
 
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string>(),
-                arguments: new Dictionary<IArgumentData, string> { [attribute] = "value" })
+            RouteValues = new Dictionary<IRoutePart, string> { [attribute] = "value" }
         };
 
         var bindingContext = new BindingContext(typeof(string), [attribute], false, null);
@@ -65,10 +58,7 @@ public sealed class ArgumentBinderTest
     {
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string>(),
-                arguments: new Dictionary<IArgumentData, string>())
+            RouteValues = new Dictionary<IRoutePart, string>()
         };
 
         var bindingContext = new BindingContext(typeof(string), [new ArgumentAttribute(isRequired: false)], false, null);
@@ -86,10 +76,7 @@ public sealed class ArgumentBinderTest
 
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string>(),
-                arguments: new Dictionary<IArgumentData, string> { [attribute] = "55.4" })
+            RouteValues = new Dictionary<IRoutePart, string> { [attribute] = "55.4" }
         };
 
         var bindingContext = new BindingContext(typeof(decimal), [attribute], false, null);

@@ -1,4 +1,3 @@
-using Swallow.Cli;
 using Swallow.Cli.Routing;
 using Swallow.Cli.Routing.Delegates;
 using Swallow.Cli.Routing.Delegates.Binders;
@@ -28,10 +27,7 @@ public sealed class OptionBinderTest
         var attribute = new OptionAttribute();
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string> { [attribute] = "value" },
-                arguments: new Dictionary<IArgumentData, string>())
+            RouteValues = new Dictionary<IRoutePart, string> { [attribute] = "value" }
         };
 
         var bindingContext = new BindingContext(typeof(TestConsoleContext), [attribute], false, null);
@@ -45,10 +41,7 @@ public sealed class OptionBinderTest
 
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string> { [attribute] = "value" },
-                arguments: new Dictionary<IArgumentData, string>())
+            RouteValues = new Dictionary<IRoutePart, string> { [attribute] = "value" }
         };
 
         var bindingContext = new BindingContext(typeof(string), [attribute], false, null);
@@ -64,10 +57,7 @@ public sealed class OptionBinderTest
     {
         var context = new TestConsoleContext
         {
-            RouteValues = new RouteValues(
-                flags: [],
-                options: new Dictionary<IOptionData, string>(),
-                arguments: new Dictionary<IArgumentData, string>())
+            RouteValues = new Dictionary<IRoutePart, string>()
         };
 
         var bindingContext = new BindingContext(typeof(string), [new OptionAttribute()], false, null);

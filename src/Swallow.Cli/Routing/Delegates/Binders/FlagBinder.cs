@@ -11,7 +11,7 @@ internal sealed class FlagBinder : ParameterBinderBase<bool>
             return false;
         }
 
-        value = context.RouteValues.EnabledFlags.Contains(attribute);
+        value = context.RouteValues.ContainsKey(attribute);
         if (!value && attribute.IsRequired)
         {
             throw new InvalidOperationException($"Required flag {attribute} is not enabled.");

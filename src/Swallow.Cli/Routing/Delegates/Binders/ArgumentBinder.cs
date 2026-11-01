@@ -11,7 +11,7 @@ internal sealed class ArgumentBinder : ParameterBinderBase<string?>
             return false;
         }
 
-        if (context.RouteValues.Arguments.TryGetValue(attribute, out value))
+        if (context.RouteValues.TryGetValue(attribute, out value))
         {
             return true;
         }

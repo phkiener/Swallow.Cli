@@ -35,10 +35,5 @@ public abstract class ConsoleContext
     /// <summary>
     /// Contains parsed route information.
     /// </summary>
-    public RouteValues RouteValues { get; set; } = RouteValues.Empty;
-
-    /// <summary>
-    /// Contains parsed route information.
-    /// </summary>
-    public RouteValueDictionary RouteValueDictionary { get; set; } = RouteValueDictionary.Empty;
+    public RouteValueDictionary RouteValues { get; set; } = RouteValueDictionary.Empty;
 }

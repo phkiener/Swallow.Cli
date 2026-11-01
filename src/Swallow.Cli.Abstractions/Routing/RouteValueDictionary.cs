@@ -47,4 +47,6 @@ public sealed class RouteValueDictionary : IReadOnlyDictionary<IRoutePart, strin
     /// An empty route value dictionary.
     /// </summary>
     public static RouteValueDictionary Empty { get; } = new();
+
+    public static implicit operator RouteValueDictionary(Dictionary<IRoutePart, string> values) => new(values);
 }
