@@ -1,3 +1,5 @@
+using Swallow.Cli.Routing;
+
 namespace Swallow.Cli;
 
 /// <summary>
@@ -34,4 +36,9 @@ public abstract class ConsoleContext
     /// Contains parsed route information.
     /// </summary>
     public RouteValues RouteValues { get; set; } = RouteValues.Empty;
+
+    /// <summary>
+    /// Contains parsed route information.
+    /// </summary>
+    public RouteValueDictionary RouteValueDictionary { get; set; } = RouteValueDictionary.Empty;
 }
