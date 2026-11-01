@@ -1,4 +1,0 @@
-# TODO: Remove me once I'm done here.
-
-[*.cs]
-dotnet_diagnostic.CS1591.severity = none
