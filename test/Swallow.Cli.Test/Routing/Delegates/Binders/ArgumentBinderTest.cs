@@ -23,10 +23,18 @@ public sealed class ArgumentBinderTest
     }
 
     [Test]
-    public void ThrowsException_WhenValueIsNotString()
+    public void ThrowsException_WhenValueIsNotBindable()
     {
-        var context = new TestConsoleContext();
-        var bindingContext = new BindingContext(typeof(int), [new ArgumentAttribute(isRequired: true)], false, null);
+        var attribute = new ArgumentAttribute(isRequired: true);
+        var context = new TestConsoleContext
+        {
+            RouteValues = new RouteValues(
+                flags: [],
+                options: new Dictionary<IOptionData, string>(),
+                arguments: new Dictionary<IArgumentData, string> { [attribute] = "value" })
+        };
+
+        var bindingContext = new BindingContext(typeof(TestConsoleContext), [attribute], false, null);
 
         Assert.Throws<InvalidOperationException>(() => binder.TryBind(bindingContext, context, out _));
     }
@@ -63,7 +71,7 @@ public sealed class ArgumentBinderTest
                 arguments: new Dictionary<IArgumentData, string>())
         };
 
-        var bindingContext = new BindingContext(typeof(string), [new ArgumentAttribute(isRequired: true)], false, null);
+        var bindingContext = new BindingContext(typeof(string), [new ArgumentAttribute(isRequired: false)], false, null);
 
         var result = binder.TryBind(bindingContext, context, out var boundValue);
 

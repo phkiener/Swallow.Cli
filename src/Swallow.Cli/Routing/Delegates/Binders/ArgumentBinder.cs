@@ -1,33 +1,27 @@
-using System.ComponentModel;
-
 namespace Swallow.Cli.Routing.Delegates.Binders;
 
-internal sealed class ArgumentBinder : IDelegateParameterBinder
+internal sealed class ArgumentBinder : ParameterBinderBase<string?>
 {
-    public bool TryBind(BindingContext bindingContext, ConsoleContext context, out object? boundValue)
+    protected override bool TryGetSourceValue(BindingContext bindingContext, ConsoleContext context, out string? value)
     {
         var attribute = bindingContext.Attributes.OfType<ArgumentAttribute>().FirstOrDefault();
         if (attribute == null)
         {
-            boundValue = null;
+            value = null;
             return false;
         }
 
-        var rawValue = context.RouteValues?.Arguments.TryGetValue(attribute, out var value) ?? false ? value : null;
-        if (bindingContext.ValueType == typeof(string))
+        if (context.RouteValues.Arguments.TryGetValue(attribute, out value))
         {
-            boundValue = rawValue;
             return true;
         }
 
-        var converter = TypeDescriptor.GetConverter(bindingContext.ValueType);
-        if (converter.CanConvertFrom(typeof(string)) && rawValue is not null)
+        if (attribute.IsRequired)
         {
-            boundValue = converter.ConvertFrom(rawValue);
-            return true;
+            throw new InvalidOperationException($"Required option {attribute} is not set.");
         }
 
-        boundValue = null;
-        return false;
+        value = null;
+        return true;
     }
 }

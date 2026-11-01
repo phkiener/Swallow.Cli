@@ -25,9 +25,16 @@ public sealed class OptionBinderTest
     [Test]
     public void ThrowsException_WhenValueIsNotString()
     {
-        var context = new TestConsoleContext();
-        var bindingContext = new BindingContext(typeof(int), [new OptionAttribute()], false, null);
+        var attribute = new OptionAttribute();
+        var context = new TestConsoleContext
+        {
+            RouteValues = new RouteValues(
+                flags: [],
+                options: new Dictionary<IOptionData, string> { [attribute] = "value" },
+                arguments: new Dictionary<IArgumentData, string>())
+        };
 
+        var bindingContext = new BindingContext(typeof(TestConsoleContext), [attribute], false, null);
         Assert.Throws<InvalidOperationException>(() => binder.TryBind(bindingContext, context, out _));
     }
 
