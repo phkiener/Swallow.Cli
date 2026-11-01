@@ -27,6 +27,12 @@ internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> ent
         // First step: Match the prefix. This part is determined by the route itself.
         foreach (var prefix in routeParts.OfType<ICommandData>())
         {
+            if (tokenIndex >= tokens.Length)
+            {
+                routeValues = RouteValueDictionary.Empty;
+                return false;
+            }
+
             ref var token = ref tokens[tokenIndex];
             if (!token.Kind.HasFlag(TokenType.Command) || token.Text != prefix.Name)
             {

@@ -13,7 +13,7 @@ An experiment.
   - [x] Compound options (`-bar foo` => `-b -a -r foo`)
   - [x] Double-dash (`-f -- -b` => `-b` as argument)
   - [ ] Windows-style (`/` instead of `-`, PascalCase instead of kebap-case)
-  - [ ] Binding options & arguments to custom types
+  - [x] Binding options & arguments to custom types
   - [ ] Bind list to options and arguments
   - [ ] "Accept all"-style parameters
 - [ ] "Controllers" (name pending) as entrypoints instead of delegates

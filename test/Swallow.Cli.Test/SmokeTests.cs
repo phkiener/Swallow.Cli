@@ -65,4 +65,19 @@ public sealed class SmokeTests
 
         await Assert.That(checkpoints).IsEquivalentTo(["middleware 1", "middleware 2", "entrypoint"], CollectionOrdering.Matching);
     }
+
+    [Test]
+    public async Task Fallback_IsInvokedWhenNoRouteMatches()
+    {
+        string? seenEntrypoint = null;
+
+        await using var application = ConsoleApplication.CreateBuilder().Build();
+        application.Map(([Flag(ShortName = 'v', IsRequired = true)] bool showVersion) => seenEntrypoint = "version");
+        application.Map(([Flag(ShortName = 'h', IsRequired = true)] bool showHelp) => seenEntrypoint = "help");
+        application.Map("command", ([Argument(isRequired: true)] string argument) => seenEntrypoint = "command");
+        application.MapFallback(() => seenEntrypoint = "fallback");
+
+        await application.RunAsync([]);
+        await Assert.That(seenEntrypoint).IsEqualTo("fallback");
+    }
 }

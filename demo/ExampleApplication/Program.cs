@@ -12,5 +12,6 @@ app.UseMiddleware((ctx, next) =>
 
 app.Map(([Flag(ShortName = 'h', LongName = "help", IsRequired = true)] bool showHelp) => Console.WriteLine("demo [-h|--help]"));
 app.Map(() => Console.WriteLine("Hello World!"));
+app.MapFallback(() => Console.WriteLine("Whaddya want"));
 
 return await app.RunAsync(args);

@@ -39,11 +39,6 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
             await executionPipeline.Invoke(context);
             return context.Result.ExitCode ?? 0;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Unhandled exception: {e}");
-            return 255;
-        }
         finally
         {
             Console.CancelKeyPress -= CancelInvocation;
