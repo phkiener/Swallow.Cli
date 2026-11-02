@@ -14,9 +14,10 @@ An experiment.
   - [x] Double-dash (`-f -- -b` => `-b` as argument)
   - [ ] Windows-style (`/` instead of `-`, PascalCase instead of kebap-case)
   - [x] Binding options & arguments to custom types
-  - [ ] Bind list to options and arguments
+  - [ ] Bind list to options and arguments (`StringValues`)
   - [ ] "Accept all"-style parameters
 - [ ] "Controllers" (name pending) as entrypoints instead of delegates
+- [ ] Configurable routing (/ invocation?) middlewares
 - [ ] Dynamic access to the list of entrypoints (think `EndpointDataSource`)
 - [ ] Configuration inside `$XDG_CONFIG_HOME` (and other `XDG_*`-dirs?)
 - [ ] Out-of-the-box help (`-h`, `--help`) and version (`-v`, `--version`) entrypoints
