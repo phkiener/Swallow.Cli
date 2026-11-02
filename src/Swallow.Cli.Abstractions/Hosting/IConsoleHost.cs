@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+
 namespace Swallow.Cli.Hosting;
 
 /// <summary>
@@ -14,6 +16,11 @@ public interface IConsoleHost
     /// The environment the application is hosted in.
     /// </summary>
     public IConsoleHostEnvironment Environment { get; }
+
+    /// <summary>
+    /// The configuration for the application.
+    /// </summary>
+    public IConfiguration Configuration { get; }
 
     /// <summary>
     /// Add a middleware to the invocation pipeline.

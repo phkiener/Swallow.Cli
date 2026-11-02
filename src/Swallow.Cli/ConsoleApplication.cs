@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swallow.Cli.Hosting;
 using Swallow.Cli.Internal;
@@ -14,14 +15,16 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
     private readonly List<IEntrypointDataSource> dataSources = [];
     private readonly List<Func<InvocationDelegate, InvocationDelegate>> middlewares = [];
 
-    internal ConsoleApplication(IServiceCollection services, IConsoleHostEnvironment consoleHostEnvironment)
+    internal ConsoleApplication(IServiceCollection services, IConsoleHostEnvironment consoleHostEnvironment, IConfigurationRoot configuration)
     {
         services.AddSingleton<IConsoleHost>(this);
         services.AddSingleton<IEntrypointDataSource>(new CompositeEntrypointDataSource(dataSources));
+        services.AddSingleton<IConfiguration>(configuration);
         services.AddSingleton(consoleHostEnvironment);
 
         serviceProvider = services.BuildServiceProvider();
         Environment = consoleHostEnvironment;
+        Configuration = configuration;
     }
 
     /// <inheritdoc />
@@ -32,6 +35,9 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
 
     /// <inheritdoc />
     public IConsoleHostEnvironment Environment { get; }
+
+    /// <inheritdoc />
+    public IConfiguration Configuration { get; }
 
     /// <inheritdoc />
     public IConsoleHost Use(Func<InvocationDelegate, InvocationDelegate> middleware)
