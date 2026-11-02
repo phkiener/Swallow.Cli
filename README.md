@@ -8,7 +8,7 @@ An experiment.
 - [ ] Direct-assigned options (`-o=foo`, `--option=foo`, `/o:foo`, `/option:foo`)
 - [ ] Multi-assign options and arguments (match lists, in the style of `StringValues`)
 - [ ] "Controllers" (name pending) for entrypoints; with autodiscovery
-- [ ] Out-of-the-box help (`-h`, `--help`) and version (`-v`, `--version`) entrypoints
+- [ ] Out-of-the-box help (`-h`, `--help`) entrypoints
 - [ ] Host-lifetime & `IHostedService` support
 - [ ] Accept `string` for `RunAsync`, not just `string[]`
 - [ ] Documentation, explicitly with symmetry to ASP.NET core
