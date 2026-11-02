@@ -23,6 +23,11 @@ public interface IConsoleHost
     public IConfiguration Configuration { get; }
 
     /// <summary>
+    /// Additional information that can be set on the host.
+    /// </summary>
+    public IDictionary<string, object> Properties { get; }
+
+    /// <summary>
     /// Add a middleware to the invocation pipeline.
     /// </summary>
     /// <param name="middleware">The middleware to use.</param>

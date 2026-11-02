@@ -17,9 +17,12 @@ var app = builder.Build();
 
 app.UseMiddleware((ctx, next) =>
 {
-    Console.WriteLine("Yeet.");
+    Console.WriteLine($"Middleware before routing, entrypoint is {(ctx.Entrypoint is null ? "null" : "not null")}");
+
     return next(ctx);
 });
+
+app.UseRouting();
 
 app.Map(([Flag(ShortName = 'h', LongName = "help", IsRequired = true)] bool showHelp) => Console.WriteLine("demo [-h|--help]"));
 app.Map(() => Console.WriteLine("Hello World!"));

@@ -20,6 +20,7 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
         services.AddSingleton<IConsoleHost>(this);
         services.AddSingleton<IEntrypointDataSource>(new CompositeEntrypointDataSource(dataSources));
         services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton<EntrypointRoutingMiddleware>();
         services.AddSingleton(consoleHostEnvironment);
 
         serviceProvider = services.BuildServiceProvider();
@@ -38,6 +39,9 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
 
     /// <inheritdoc />
     public IConfiguration Configuration { get; }
+
+    /// <inheritdoc />
+    public IDictionary<string, object> Properties { get; } = new Dictionary<string, object>();
 
     /// <inheritdoc />
     public IConsoleHost Use(Func<InvocationDelegate, InvocationDelegate> middleware)
@@ -59,8 +63,7 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
 
         try
         {
-            var executionPipeline = BuildExecutionPipeline(middlewares, dataSources);
-
+            var executionPipeline = BuildExecutionPipeline();
             await using var scope = Services.CreateAsyncScope();
             var context = new DefaultConsoleContext(args, scope.ServiceProvider, cancellationTokenSource);
 
@@ -91,7 +94,7 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
         }
     }
 
-    private static InvocationDelegate BuildExecutionPipeline(IReadOnlyList<Func<InvocationDelegate, InvocationDelegate>> middlewares, IReadOnlyList<IEntrypointDataSource> dataSources)
+    private InvocationDelegate BuildExecutionPipeline()
     {
         InvocationDelegate appDelegate = InvokeEntrypoint;
 
@@ -100,7 +103,12 @@ public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, 
             appDelegate = middlewares[i](appDelegate);
         }
 
-        var routing = new EntrypointRoutingMiddleware(new CompositeEntrypointDataSource(dataSources));
+        if (Properties.ContainsKey(EntrypointRoutingMiddleware.RoutingConfiguredKey))
+        {
+            return appDelegate;
+        }
+
+        var routing = Services.GetRequiredService<EntrypointRoutingMiddleware>();
         return ctx => routing.InvokeAsync(ctx, appDelegate);
 
         static Task InvokeEntrypoint(ConsoleContext context)

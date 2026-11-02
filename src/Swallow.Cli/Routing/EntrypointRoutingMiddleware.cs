@@ -5,6 +5,8 @@ namespace Swallow.Cli.Routing;
 
 internal sealed class EntrypointRoutingMiddleware(IEntrypointDataSource entrypointDataSource) : IMiddleware
 {
+    public const string RoutingConfiguredKey = "__Routing";
+
     public Task InvokeAsync(ConsoleContext context, InvocationDelegate next)
     {
         var tokens = Tokenizer.Tokenize(context.Invocation.Arguments).ToArray();
