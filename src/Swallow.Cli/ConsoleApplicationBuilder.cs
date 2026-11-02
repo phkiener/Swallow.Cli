@@ -23,8 +23,6 @@ public sealed class ConsoleApplicationBuilder
     {
         Services = new ServiceCollection();
         Environment = new DefaultConsoleHostEnvironment(displayName, appIdentifier ?? displayName);
-
-        Services.AddSingleton(Environment);
     }
 
     /// <summary>
@@ -33,6 +31,6 @@ public sealed class ConsoleApplicationBuilder
     /// <returns>The built application.</returns>
     public ConsoleApplication Build()
     {
-        return new ConsoleApplication(Services);
+        return new ConsoleApplication(Services, Environment);
     }
 }

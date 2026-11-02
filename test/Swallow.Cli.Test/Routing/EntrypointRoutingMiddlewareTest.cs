@@ -1,5 +1,6 @@
 using Swallow.Cli;
 using Swallow.Cli.Routing;
+using Swallow.Cli.Routing.Segments;
 using Swallow.Console.Arguments;
 
 namespace Swallow.Console.Test.Routing;
@@ -122,7 +123,7 @@ public sealed class EntrypointRoutingMiddlewareTest
     {
         var context = new TestConsoleContext(args);
         var entrypoint = new TestEntrypoint(routeParts);
-        var middleware = new EntrypointRoutingMiddleware([entrypoint]);
+        var middleware = new EntrypointRoutingMiddleware(new FixedEntrypointsDataSource([entrypoint]));
 
         await middleware.InvokeAsync(context, _ => Task.CompletedTask);
 
@@ -133,6 +134,11 @@ public sealed class EntrypointRoutingMiddlewareTest
     {
         public IRoutePart[] RouteParts { get; } = routeParts;
         public InvocationDelegate Delegate { get; } = _ => Task.CompletedTask;
+    }
+
+    private sealed class FixedEntrypointsDataSource(IReadOnlyList<IEntrypoint> entrypoints) : IEntrypointDataSource
+    {
+        public IReadOnlyCollection<IEntrypoint> GetEntrypoints() => entrypoints;
     }
 
     private static class RoutePart

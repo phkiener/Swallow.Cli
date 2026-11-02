@@ -1,10 +1,14 @@
+using Swallow.Cli.Hosting;
+using Swallow.Cli.Routing.Segments;
+
 namespace Swallow.Cli.Routing;
 
-internal sealed class EntrypointRoutingMiddleware(IReadOnlyList<IEntrypoint> entrypoints) : IMiddleware
+internal sealed class EntrypointRoutingMiddleware(IEntrypointDataSource entrypointDataSource) : IMiddleware
 {
     public Task InvokeAsync(ConsoleContext context, InvocationDelegate next)
     {
         var tokens = Tokenizer.Tokenize(context.Invocation.Arguments).ToArray();
+        var entrypoints = entrypointDataSource.GetEntrypoints();
 
         foreach (var entrypoint in entrypoints)
         {

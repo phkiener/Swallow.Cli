@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Swallow.Cli;
+using Swallow.Cli.Hosting;
 using Swallow.Cli.Routing;
+using Swallow.Cli.Routing.Delegates;
 using TUnit.Assertions.Enums;
 
 namespace Swallow.Console.Test;

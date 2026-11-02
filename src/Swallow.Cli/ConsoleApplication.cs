@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Swallow.Cli.Hosting;
 using Swallow.Cli.Internal;
 using Swallow.Cli.Routing;
 
@@ -7,15 +8,37 @@ namespace Swallow.Cli;
 /// <summary>
 /// A console application capable of invoking <see cref="IEntrypoint"/>s.
 /// </summary>
-public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
+public sealed class ConsoleApplication : IConsoleHost, IEntrypointRouteBuilder, IDisposable, IAsyncDisposable
 {
     private readonly ServiceProvider serviceProvider;
-
+    private readonly List<IEntrypointDataSource> dataSources = [];
     private readonly List<Func<InvocationDelegate, InvocationDelegate>> middlewares = [];
 
-    internal ConsoleApplication(IServiceCollection services)
+    internal ConsoleApplication(IServiceCollection services, IConsoleHostEnvironment consoleHostEnvironment)
     {
+        services.AddSingleton<IConsoleHost>(this);
+        services.AddSingleton<IEntrypointDataSource>(new CompositeEntrypointDataSource(dataSources));
+        services.AddSingleton(consoleHostEnvironment);
+
         serviceProvider = services.BuildServiceProvider();
+        Environment = consoleHostEnvironment;
+    }
+
+    /// <inheritdoc />
+    public ICollection<IEntrypointDataSource> DataSources => dataSources;
+
+    /// <inheritdoc cref="IConsoleHost.Services" />
+    public IServiceProvider Services => serviceProvider;
+
+    /// <inheritdoc />
+    public IConsoleHostEnvironment Environment { get; }
+
+    /// <inheritdoc />
+    public IConsoleHost Use(Func<InvocationDelegate, InvocationDelegate> middleware)
+    {
+        middlewares.Add(middleware);
+
+        return this;
     }
 
     /// <summary>
@@ -30,10 +53,9 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
 
         try
         {
-            var entrypoints = dataSources.SelectMany(ds => ds.GetEntrypoints()).ToList();
-            var executionPipeline = BuildExecutionPipeline(middlewares, entrypoints);
+            var executionPipeline = BuildExecutionPipeline(middlewares, dataSources);
 
-            await using var scope = serviceProvider.CreateAsyncScope();
+            await using var scope = Services.CreateAsyncScope();
             var context = new DefaultConsoleContext(args, scope.ServiceProvider, cancellationTokenSource);
 
             await executionPipeline.Invoke(context);
@@ -63,7 +85,7 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
         }
     }
 
-    private static InvocationDelegate BuildExecutionPipeline(IReadOnlyList<Func<InvocationDelegate, InvocationDelegate>> middlewares, IReadOnlyList<IEntrypoint> entrypoints)
+    private static InvocationDelegate BuildExecutionPipeline(IReadOnlyList<Func<InvocationDelegate, InvocationDelegate>> middlewares, IReadOnlyList<IEntrypointDataSource> dataSources)
     {
         InvocationDelegate appDelegate = InvokeEntrypoint;
 
@@ -72,7 +94,7 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
             appDelegate = middlewares[i](appDelegate);
         }
 
-        var routing = new EntrypointRoutingMiddleware(entrypoints);
+        var routing = new EntrypointRoutingMiddleware(new CompositeEntrypointDataSource(dataSources));
         return ctx => routing.InvokeAsync(ctx, appDelegate);
 
         static Task InvokeEntrypoint(ConsoleContext context)

@@ -1,9 +1,9 @@
-namespace Swallow.Cli.Routing;
+namespace Swallow.Cli.Routing.Segments;
 
 /// <summary>
-/// An option, i.e. a <see cref="IFlagData"/> with a value.
+/// Information about a flag, i.e. a setting that can be enabled.
 /// </summary>
-public interface IOptionData : IRoutePart
+public interface IFlagData : IRoutePart
 {
     /// <summary>
     /// Whether the flag is required.

@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Routing;
+namespace Swallow.Cli.Routing.Delegates;
 
 /// <summary>
 /// An attribute that denotes a parameter to be injected via <see cref="ConsoleContext.Services"/>.

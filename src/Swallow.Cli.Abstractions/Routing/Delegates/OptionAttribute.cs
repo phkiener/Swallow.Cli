@@ -1,4 +1,6 @@
-namespace Swallow.Cli.Routing;
+using Swallow.Cli.Routing.Segments;
+
+namespace Swallow.Cli.Routing.Delegates;
 
 /// <summary>
 /// An attribute that defines an option for an <see cref="IEntrypoint"/>.

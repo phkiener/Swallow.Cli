@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Routing;
+namespace Swallow.Cli.Routing.Segments;
 
 /// <summary>
 /// An argument, i.e. a value passed to the command itself.

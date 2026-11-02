@@ -1,4 +1,6 @@
-namespace Swallow.Cli;
+using Swallow.Cli.Routing;
+
+namespace Swallow.Cli.Hosting;
 
 /// <summary>
 /// A middleware that can be added to the invocation pipeline, before the actual <see cref="IEntrypoint"/> gets executed.

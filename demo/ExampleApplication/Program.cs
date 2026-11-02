@@ -1,5 +1,7 @@
 using Swallow.Cli;
+using Swallow.Cli.Hosting;
 using Swallow.Cli.Routing;
+using Swallow.Cli.Routing.Delegates;
 
 var builder = ConsoleApplication.CreateBuilder("demo");
 var app = builder.Build();

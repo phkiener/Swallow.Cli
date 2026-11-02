@@ -1,6 +1,7 @@
 using Swallow.Cli.Routing;
 using Swallow.Cli.Routing.Delegates;
 using Swallow.Cli.Routing.Delegates.Binders;
+using Swallow.Cli.Routing.Segments;
 using Swallow.Console.Arguments;
 
 namespace Swallow.Console.Test.Routing.Delegates.Binders;

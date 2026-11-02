@@ -1,3 +1,6 @@
+using Swallow.Cli.Hosting;
+using Swallow.Cli.Routing.Segments;
+
 namespace Swallow.Cli.Routing;
 
 /// <summary>

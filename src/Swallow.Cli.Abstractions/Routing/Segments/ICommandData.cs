@@ -1,4 +1,4 @@
-namespace Swallow.Cli.Routing;
+namespace Swallow.Cli.Routing.Segments;
 
 /// <summary>
 /// A command, i.e. a prefix to choose a certain behavior.

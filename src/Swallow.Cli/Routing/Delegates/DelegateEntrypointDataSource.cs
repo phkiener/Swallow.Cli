@@ -1,3 +1,5 @@
+using Swallow.Cli.Routing.Segments;
+
 namespace Swallow.Cli.Routing.Delegates;
 
 internal sealed class DelegateEntrypointDataSource : IEntrypointDataSource
