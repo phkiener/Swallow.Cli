@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Swallow.Cli.Hosting;
+using Swallow.Cli.Internal;
 
 namespace Swallow.Cli;
 
@@ -12,9 +14,17 @@ public sealed class ConsoleApplicationBuilder
     /// </summary>
     public IServiceCollection Services { get; }
 
-    internal ConsoleApplicationBuilder()
+    /// <summary>
+    /// The <see cref="IConsoleHostEnvironment"/> for the application.
+    /// </summary>
+    public IConsoleHostEnvironment Environment { get; }
+
+    internal ConsoleApplicationBuilder(string displayName, string? appIdentifier = null)
     {
         Services = new ServiceCollection();
+        Environment = new DefaultConsoleHostEnvironment(displayName, appIdentifier ?? displayName);
+
+        Services.AddSingleton(Environment);
     }
 
     /// <summary>

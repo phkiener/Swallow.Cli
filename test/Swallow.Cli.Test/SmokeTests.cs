@@ -12,7 +12,7 @@ public sealed class SmokeTests
     {
         var entrypointHit = false;
 
-        await using var application = ConsoleApplication.CreateBuilder().Build();
+        await using var application = ConsoleApplication.CreateBuilder("test").Build();
         application.Map(() => { entrypointHit = true; });
 
         await application.RunAsync([]);
@@ -29,7 +29,7 @@ public sealed class SmokeTests
         var argumentValue = "";
         var injectedValue = "";
 
-        var builder = ConsoleApplication.CreateBuilder();
+        var builder = ConsoleApplication.CreateBuilder("test");
         builder.Services.AddScoped<string>(static _ => "service");
 
         await using var application = builder.Build();
@@ -56,7 +56,7 @@ public sealed class SmokeTests
     {
         var checkpoints = new List<string>();
 
-        await using var application = ConsoleApplication.CreateBuilder().Build();
+        await using var application = ConsoleApplication.CreateBuilder("test").Build();
         application.UseMiddleware((ctx, next) => { checkpoints.Add("middleware 1"); return next(ctx); });
         application.UseMiddleware((ctx, next) => { checkpoints.Add("middleware 2"); return next(ctx); });
         application.Map(() => checkpoints.Add("entrypoint"));
@@ -71,7 +71,7 @@ public sealed class SmokeTests
     {
         string? seenEntrypoint = null;
 
-        await using var application = ConsoleApplication.CreateBuilder().Build();
+        await using var application = ConsoleApplication.CreateBuilder("test").Build();
         application.Map(([Flag(ShortName = 'v', IsRequired = true)] bool showVersion) => seenEntrypoint = "version");
         application.Map(([Flag(ShortName = 'h', IsRequired = true)] bool showHelp) => seenEntrypoint = "help");
         application.Map("command", ([Argument(isRequired: true)] string argument) => seenEntrypoint = "command");

@@ -1,22 +1,45 @@
 namespace Swallow.Cli.Routing;
 
+/// <summary>
+/// Extensions to map a handler for when no entrypoint matches the invocation.
+/// </summary>
 public static class FallbackEntrypointExtensions
 {
+    /// <summary>
+    /// Map the given <paramref name="handler"/> to handle invocations where no other <see cref="IEntrypoint"/> matches.
+    /// </summary>
+    /// <param name="application">The application for which to add the fallback.</param>
+    /// <param name="handler">The handler to invoke.</param>
     public static void MapFallback(this ConsoleApplication application, Func<ConsoleContext, Task> handler)
     {
         application.UseFallback(ctx => handler(ctx));
     }
 
+    /// <summary>
+    /// Map the given <paramref name="handler"/> to handle invocations where no other <see cref="IEntrypoint"/> matches.
+    /// </summary>
+    /// <param name="application">The application for which to add the fallback.</param>
+    /// <param name="handler">The handler to invoke.</param>
     public static void MapFallback(this ConsoleApplication application, Action<ConsoleContext> handler)
     {
         application.UseFallback(ctx => { handler(ctx); return Task.CompletedTask; });
     }
 
+    /// <summary>
+    /// Map the given <paramref name="handler"/> to handle invocations where no other <see cref="IEntrypoint"/> matches.
+    /// </summary>
+    /// <param name="application">The application for which to add the fallback.</param>
+    /// <param name="handler">The handler to invoke.</param>
     public static void MapFallback(this ConsoleApplication application, Func<Task> handler)
     {
         application.UseFallback(_ => handler());
     }
 
+    /// <summary>
+    /// Map the given <paramref name="handler"/> to handle invocations where no other <see cref="IEntrypoint"/> matches.
+    /// </summary>
+    /// <param name="application">The application for which to add the fallback.</param>
+    /// <param name="handler">The handler to invoke.</param>
     public static void MapFallback(this ConsoleApplication application, Action handler)
     {
         application.UseFallback(_ => { handler(); return Task.CompletedTask; });

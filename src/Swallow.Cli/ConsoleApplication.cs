@@ -98,6 +98,8 @@ public sealed partial class ConsoleApplication : IDisposable, IAsyncDisposable
     /// <summary>
     /// Create a new <see cref="ConsoleApplicationBuilder"/>.
     /// </summary>
+    /// <param name="displayName">The user-visible name for the application.</param>
+    /// <param name="appIdentifier">A unique identifier for the application.</param>
     /// <returns>The new builder.</returns>
-    public static ConsoleApplicationBuilder CreateBuilder() => new();
+    public static ConsoleApplicationBuilder CreateBuilder(string displayName, string? appIdentifier = null) => new(displayName, appIdentifier);
 }

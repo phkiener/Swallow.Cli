@@ -1,7 +1,7 @@
 using Swallow.Cli;
 using Swallow.Cli.Routing;
 
-var builder = ConsoleApplication.CreateBuilder();
+var builder = ConsoleApplication.CreateBuilder("demo");
 var app = builder.Build();
 
 app.UseMiddleware((ctx, next) =>

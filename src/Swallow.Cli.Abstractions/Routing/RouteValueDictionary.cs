@@ -48,5 +48,10 @@ public sealed class RouteValueDictionary : IReadOnlyDictionary<IRoutePart, strin
     /// </summary>
     public static RouteValueDictionary Empty { get; } = new();
 
+    /// <summary>
+    /// Cast the given dictionary to a <see cref="RouteValueDictionary"/>.
+    /// </summary>
+    /// <param name="values">The dictionary to cast.</param>
+    /// <returns>The resulting <see cref="RouteValueDictionary"/>.</returns>
     public static implicit operator RouteValueDictionary(Dictionary<IRoutePart, string> values) => new(values);
 }
