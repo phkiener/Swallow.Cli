@@ -18,6 +18,4 @@ An experiment.
   - [ ] "Accept all"-style parameters
 - [ ] "Controllers" (name pending) as entrypoints instead of delegates
 - [ ] Configurable routing (/ invocation?) middlewares
-- [ ] Dynamic access to the list of entrypoints (think `EndpointDataSource`)
-- [ ] Configuration inside `$XDG_CONFIG_HOME` (and other `XDG_*`-dirs?)
 - [ ] Out-of-the-box help (`-h`, `--help`) and version (`-v`, `--version`) entrypoints
