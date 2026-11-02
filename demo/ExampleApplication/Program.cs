@@ -1,9 +1,18 @@
+using Microsoft.Extensions.Configuration;
 using Swallow.Cli;
 using Swallow.Cli.Hosting;
 using Swallow.Cli.Routing;
 using Swallow.Cli.Routing.Delegates;
 
+Environment.SetEnvironmentVariable("XDG_CONFIG_HOME", Environment.CurrentDirectory + "/.run/XDG_CONFIG_HOME");
+Environment.SetEnvironmentVariable("XDG_CACHE_HOME", Environment.CurrentDirectory + "/.run/XDG_CACHE_HOME");
+Environment.SetEnvironmentVariable("XDG_DATA_HOME", Environment.CurrentDirectory + "/.run/XDG_DATA_HOME");
+Environment.SetEnvironmentVariable("XDG_STATE_HOME", Environment.CurrentDirectory + "/.run/XDG_STATE_HOME");
+
 var builder = ConsoleApplication.CreateBuilder("demo");
+builder.Configuration.AddEnvironmentVariables("DEMO_");
+builder.Configuration.AddJsonFile($"{builder.Environment.ConfigurationPath}/cfg.json", optional: true);
+
 var app = builder.Build();
 
 app.UseMiddleware((ctx, next) =>
