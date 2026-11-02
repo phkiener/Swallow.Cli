@@ -27,6 +27,7 @@ app.UseRouting();
 
 app.Map(([Flag(ShortName = 'h', LongName = "help", IsRequired = true)] bool showHelp) => Console.WriteLine("demo [-h|--help]"));
 app.Map(() => Console.WriteLine("Hello World!"));
+app.MapVersion("[$$$ secret preview version $$$]", displayAppName: true);
 app.MapFallback(() => Console.WriteLine("Whaddya want"));
 
 return await app.RunAsync(args);
