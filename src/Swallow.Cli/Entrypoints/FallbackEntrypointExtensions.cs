@@ -1,7 +1,8 @@
 using Swallow.Cli.Hosting;
+using Swallow.Cli.Routing;
 using Swallow.Cli.Routing.Segments;
 
-namespace Swallow.Cli.Routing;
+namespace Swallow.Cli.Entrypoints;
 
 /// <summary>
 /// Extensions to map a handler for when no entrypoint matches the invocation.
