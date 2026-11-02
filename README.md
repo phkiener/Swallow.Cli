@@ -13,3 +13,4 @@ An experiment.
 - [ ] Host-lifetime & `IHostedService` support
 - [ ] Accept `string` for `RunAsync`, not just `string[]`
 - [ ] Documentation, explicitly with symmetry to ASP.NET core
+- [ ] Metadata for endpoints
